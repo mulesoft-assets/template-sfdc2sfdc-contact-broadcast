@@ -1,10 +1,10 @@
-# Mule Kick: SFDC to SFDC Contacts Sync
+# Mule Kick: SFDC to SFDC Automatic Contact Sync
 
 + [Use Case](#usecase)
 + [Run it!](#runit)
     * [Running on CloudHub](#runoncloudhub)
     * [Running on premise](#runonopremise)
-        * [Properties to be configured](#propertiestobeconfigured)
+    * [Properties to be configured](#propertiestobeconfigured)
 
 
 ## Use Case <a name="usecase"/>
