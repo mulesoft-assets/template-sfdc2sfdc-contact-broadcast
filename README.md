@@ -38,7 +38,7 @@ Complete all properties in one of the property files, for example in [mule.prod.
 Once your app is all set and started, there is no need to do anything else. Every time a Contact is created or modified, it will be automatically synchronised to SFDC Org B as long as it has an Email.
 
 
-# Properties to be configured (With examples) (#propertiestobeconfigured)
+# Properties to be configured (With examples) <a name="propertiestobeconfigured"/>
 
 In order to use this Mule Kick you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. Detail list with examples:
 
