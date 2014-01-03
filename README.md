@@ -7,16 +7,16 @@
     * [Properties to be configured](#propertiestobeconfigured)
 
 
-## Use Case <a name="usecase"/>
+# Use Case <a name="usecase"/>
 As a Salesforce admin I want to syncronize contacts between two Salesfoce orgs.
 
 This Kick (template) should serve as a foundation for setting an online sync of Contacts from one SalesForce instance to another. Everytime there is a new Contact or a change in an already existing one, SFDC Streaming API will notify this integration that will be responsible for updating the Contact on the target org.
 
 Requirements have been set not only to be used as examples, but also to stablish starting point to adapt your integration to your requirements.
 
-## Run it!
+# Run it!
 
-# Using SFDC Streaming API <a name="runit"/>
+## Using SFDC Streaming API <a name="runit"/>
 
 Before running this Kick you have to configure your SFDC Instance to notify the integration every time a Contact is created or updated, this is accomplished by creating a [Topic](http://wiki.developerforce.com/page/Getting_Started_with_the_Force.com_Streaming_API).
 
@@ -25,7 +25,7 @@ The SOQL Query for the topic has to be `SELECT Id,Department,Email,FirstName,Las
 **Note:** SFDC will only react to changes on contacts if the fields on the query defined before are modified. If you want to have an update when any change on a Contact happens, that could be done by setting to `All` the property `NotifyForFields` of the topic to be used.
 
 
-# Running on CloudHub <a name="runoncloudhub"/>
+## Running on CloudHub <a name="runoncloudhub"/>
 
 While [creating your application on CloudHub](http://www.mulesoft.org/documentation/display/current/Hello+World+on+CloudHub) (Or you can do it later as a next step), you need to go to Deployment > Advanced to set all environment variables detailed in **Properties to be configured** as well as the **mule.env**. 
 
@@ -38,7 +38,7 @@ Complete all properties in one of the property files, for example in [mule.prod.
 Once your app is all set and started, there is no need to do anything else. Every time a Contact is created or modified, it will be automatically synchronised to SFDC Org B as long as it has an Email.
 
 
-# Properties to be configured (With examples) <a name="propertiestobeconfigured"/>
+## Properties to be configured (With examples) <a name="propertiestobeconfigured"/>
 
 In order to use this Mule Kick you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. Detail list with examples:
 
