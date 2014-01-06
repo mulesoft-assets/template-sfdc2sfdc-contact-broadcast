@@ -5,7 +5,7 @@
     * [Running on CloudHub](#runoncloudhub)
     * [Running on premise](#runonopremise)
     * [Properties to be configured](#propertiestobeconfigured)
- + [Customize It!](#customizeit)
++ [Customize It!](#customizeit)
     * [config.xml](#configxml)
     * [businessLogic.xml](#businesslogicxml)
     * [errorHandling.xml](#errorhandlingxml)
@@ -88,10 +88,12 @@ In the visual editor they can be found on the *Global Element* tab.
 
 
 ## businessLogic.xml<a name="businesslogicxml"/>
-Functional aspect of the kick is implemented on this XML, directed by one flow responsible of conducting the generation of the report.
-The *mainFlow* organises the job in three different steps and finally invokes the *outboundFlow* that will deliver the report to the corresponding outbound endpoint.
-This flow has Exception Strategy that basically consists on invoking the *defaultChoiseExceptionStrategy* defined in *errorHandling.xml* file.
+Functional aspect of the kick is implemented on this XML, directed by one flow that will react upon notifications received from SalesForce Streaming API. The severeal message processors constitute four high level actions that fully implement the logic of this Kick:
 
+1. Suscribe-topic message processor listeting to event from the topic configured in the SalesForce instance.
+2. Filtering of Contacts that must have an Email and the Mailing Country have to be either **US**, **U.S.** or  **United States**. This is the point where you can configure your own filtering criteria.
+3. Checking if Contact already exists in target instance by EMail. Step needed to add the extisting ID to update the Contact.
+4. Update or create of the Contact in target instance.
 
 
 ## errorHandling.xml<a name="errorhandlingxml"/>
