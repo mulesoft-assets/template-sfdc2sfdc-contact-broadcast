@@ -10,9 +10,9 @@ xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
-    <flow name="ElE" doc:name="ElE">
+    <flow name="businessLogicFlow" doc:name="businessLogicFlow">
         <poll doc:name="Poll">
-            <fixed-frequency-scheduler frequency="60000"/>
+            <fixed-frequency-scheduler frequency="30000"/>
             <sfdc:get-updated-objects config-ref="SalesforceA" type="Contact" initialTimeWindow="120" doc:name="Fetch updated/created Contacts">
                 <sfdc:fields>
                     <sfdc:field>Email</sfdc:field>
@@ -23,10 +23,10 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
                 </sfdc:fields>
             </sfdc:get-updated-objects>
         </poll>
-        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
-        <set-variable variableName="filteredContactList" value="#[new java.util.ArrayList()]" doc:name="filteredContactList"/>
+        <logger message="#[payload]" level="INFO" doc:name="Log Contacts created/updated"/>
+        <set-variable variableName="filteredContactList" value="#[new java.util.ArrayList()]" doc:name="set filteredContactList variable"/>
         <foreach doc:name="For Each">
-        	<expression-filter expression="#[ payload.get('Email') != null &amp;&amp; ['United States','US','U.S.'].contains(payload.get('MailingCountry')) ]" doc:name="Filter if Cotact has no Email"/>
+        	<expression-filter expression="#[ payload.get('Email') != null &amp;&amp; ['United States','US','U.S.'].contains(payload.get('MailingCountry')) ]" doc:name="Filter if Cotact has no Email and if the Mailing Contry is either U.S., US or United States"/>
    	        <enricher source="#[payload]" target="#[flowVars['idInB']]" doc:name="Store in variable idInB">
         		<sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="Check contact in org B"/>
         	</enricher>
@@ -35,14 +35,13 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
      		} else {
        			payload.put('Id',flowVars['idInB'].get('Id'))}]]>
   			</expression-component>
-  			<expression-component doc:name="Add Contact to outputContactList"><![CDATA[filteredContactList.add(payload)]]></expression-component>
+  			<expression-component doc:name="Add Contact to filteredContactList"><![CDATA[filteredContactList.add(payload)]]></expression-component>
         </foreach>
-        <set-payload value="#[filteredContactList]" doc:name="Set Payload"/>
-        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
-        <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="Salesforce">
+        <set-payload value="#[filteredContactList]" doc:name="Set filteredContactList as Payload"/>
+        <logger message="#[payload]" level="INFO" doc:name="Log Contacts to be created/updated"/>
+        <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="Create/Update Contacts in Org B">
             <sfdc:objects ref="#[payload]"/>
         </sfdc:upsert>
-        <logger message="Hey #[payload]" level="INFO" doc:name="Logger"/>
     </flow>
 
 </mule>
