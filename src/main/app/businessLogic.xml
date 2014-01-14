@@ -10,34 +10,27 @@ xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
-    <flow name="businessLogicFlow" doc:name="businessLogicFlow">
+    <flow name="businessLogicFlow" processingStrategy="synchronous" doc:name="businessLogicFlow">
         <poll doc:name="Poll">
-            <fixed-frequency-scheduler frequency="30000"/>
-            <sfdc:get-updated-objects config-ref="SalesforceA" type="Contact" initialTimeWindow="120" doc:name="Fetch updated/created Contacts">
-                <sfdc:fields>
-                    <sfdc:field>Email</sfdc:field>
-                    <sfdc:field>Id</sfdc:field>
-                    <sfdc:field>FirstName</sfdc:field>
-                    <sfdc:field>LastName</sfdc:field>
-                    <sfdc:field>MailingCountry</sfdc:field>
-                </sfdc:fields>
-            </sfdc:get-updated-objects>
+            <fixed-frequency-scheduler frequency="10000"/>
+            <watermark variable="lastQueryDate" default-expression="YESTERDAY" selector="MAX" selector-expression="#[payload.LastModifiedDate]"/>
+            <sfdc:query-all config-ref="SalesforceA"   doc:name="Fetch Contacts with filtering criteria" query="SELECT EMail, FirstName, LastName, Id, LastModifiedDate FROM Contact WHERE LastModifiedDate &gt; #[flowVars['lastQueryDate']] AND EMail != null AND MailingCountry IN ('U.S.','United States','US')">
+            </sfdc:query-all>
         </poll>
         <logger message="#[payload]" level="INFO" doc:name="Log Contacts created/updated"/>
-        <set-variable variableName="filteredContactList" value="#[new java.util.ArrayList()]" doc:name="set filteredContactList variable"/>
+        <set-variable variableName="contactList" value="#[new java.util.ArrayList()]" doc:name="set contactList variable"/>
         <foreach doc:name="For Each">
-        	<expression-filter expression="#[ payload.get('Email') != null &amp;&amp; ['United States','US','U.S.'].contains(payload.get('MailingCountry')) ]" doc:name="Filter if Cotact has no Email and if the Mailing Contry is either U.S., US or United States"/>
    	        <enricher source="#[payload]" target="#[flowVars['idInB']]" doc:name="Store in variable idInB">
         		<sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="Check contact in org B"/>
         	</enricher>
         	<expression-component doc:name="Setting ID for Upsert"><![CDATA[if (flowVars['idInB'] instanceof NullPayload) {
-        		payload.remove('Id')
-     		} else {
-       			payload.put('Id',flowVars['idInB'].get('Id'))}]]>
+         		payload.remove('Id') 
+      		} else { 
+        			payload.put('Id',flowVars['idInB'].get('Id'))}]]> 
   			</expression-component>
-  			<expression-component doc:name="Add Contact to filteredContactList"><![CDATA[filteredContactList.add(payload)]]></expression-component>
+  			<expression-component doc:name="Add Contact to contactList"><![CDATA[contactList.add(payload)]]></expression-component>
         </foreach>
-        <set-payload value="#[filteredContactList]" doc:name="Set filteredContactList as Payload"/>
+        <set-payload value="#[contactList]" doc:name="Set contactList as Payload"/>
         <logger message="#[payload]" level="INFO" doc:name="Log Contacts to be created/updated"/>
         <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="Create/Update Contacts in Org B">
             <sfdc:objects ref="#[payload]"/>
