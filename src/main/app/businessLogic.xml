@@ -28,6 +28,8 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
       		} else { 
         			payload.put('Id',flowVars['idInB'].get('Id'))}]]> 
   			</expression-component>
+            <expression-component doc:name="Removing LastModifiedDate for Upsert"><![CDATA[payload.remove('LastModifiedDate')]]> 
+  			</expression-component>
   			<expression-component doc:name="Add Contact to contactList"><![CDATA[contactList.add(payload)]]></expression-component>
         </foreach>
         <set-payload value="#[contactList]" doc:name="Set contactList as Payload"/>
@@ -35,6 +37,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
         <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="Create/Update Contacts in Org B">
             <sfdc:objects ref="#[payload]"/>
         </sfdc:upsert>
+        <logger message="#[payload]" level="INFO" doc:name="Log Upsert Result"/>
     </flow>
 
 </mule>
