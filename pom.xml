@@ -62,6 +62,27 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<!-- Integration Tests -->
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<useFile>false</useFile>
+					<additionalClasspathElements>
+						<additionalClasspathElement>${MULE_HOME}/conf/</additionalClasspathElement>
+						<!-- Location of the mule licence in Bamboo muleLicenseKey.lic -->
+						<additionalClasspathElement>/home/j2ee-bamboo/license</additionalClasspathElement>
+					</additionalClasspathElements>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.mule.tools</groupId>
 				<artifactId>maven-mule-plugin</artifactId>
@@ -385,6 +406,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- for testing -->
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-devkit-support</artifactId>
+			<version>${mule.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.mule.tests</groupId>
 			<artifactId>mule-tests-functional</artifactId>
