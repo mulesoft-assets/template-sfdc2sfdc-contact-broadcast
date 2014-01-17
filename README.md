@@ -20,13 +20,9 @@ Requirements have been set not only to be used as examples, but also to stablish
 
 # Run it!
 
-## Using SFDC Streaming API <a name="runit"/>
+On either environment (CloudHub or On Premise) this Kick is configured to filter Contacts with a certain criteria that should be used as an example to build your own. 
+In this case, Contacts will be synced from origin instance only if they have an Email set and the Mailing Country is either "United States", "US" or "U.S.". All this are set in the Query so the filtering is done on SalesForce side lowering the load of data transfered to the integration, in order to make it more efficient.
 
-Before running this Kick you have to configure your SFDC Instance to notify the integration every time a Contact is created or updated, this is accomplished by creating a [Topic](http://wiki.developerforce.com/page/Getting_Started_with_the_Force.com_Streaming_API).
-
-The SOQL Query for the topic has to be `SELECT Id,Department,Email,FirstName,LastName,MailingCity,MailingCountry,MobilePhone,Phone,Title FROM Contact` and this will be the fields updated on the SFDC Instance B upon a create/update on Instance A.
-
-**Note:** SFDC will only react to changes on contacts if the fields on the query defined before are modified. If you want to have an update when any change on a Contact happens, that could be done by setting to `All` the property `NotifyForFields` of the topic to be used.
 
 
 ## Running on CloudHub <a name="runoncloudhub"/>
@@ -47,7 +43,8 @@ Once your app is all set and started, there is no need to do anything else. Ever
 In order to use this Mule Kick you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. Detail list with examples:
 
 ### Application configuration
-+ http.port `9090` 
++ polling.frequency  
++ watermark.default.expression
 
 #### SalesForce Connector configuration for company A
 + sfdc.a.username `bob.dylan@orga`
@@ -60,11 +57,6 @@ In order to use this Mule Kick you need to configure properties (Credentials, co
 + sfdc.b.password `JoanBaez456`
 + sfdc.b.securityToken `ces56arl7apQs56XTddf34X`
 + sfdc.b.url `https://login.salesforce.com/services/Soap/u/26.0`
-
-#### Topic created on SFDC Instance A
-+ sfdc.a.topic `/contactstopic`
-
-It is important to put the `/` before the name of the topic like showed above (The example is about a topic just named *contactstopic*).
 
 
 
@@ -88,12 +80,7 @@ In the visual editor they can be found on the *Global Element* tab.
 
 
 ## businessLogic.xml<a name="businesslogicxml"/>
-Functional aspect of the kick is implemented on this XML, directed by one flow that will react upon notifications received from SalesForce Streaming API. The severeal message processors constitute four high level actions that fully implement the logic of this Kick:
-
-1. Suscribe-topic message processor listeting to event from the topic configured in the SalesForce instance.
-2. Filtering of Contacts that must have an Email and the Mailing Country have to be either **US**, **U.S.** or  **United States**. This is the point where you can configure your own filtering criteria.
-3. Checking if Contact already exists in target instance by EMail. Step needed to add the extisting ID to update the Contact.
-4. Update or create of the Contact in target instance.
+TBD
 
 
 ## errorHandling.xml<a name="errorhandlingxml"/>
