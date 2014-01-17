@@ -7,6 +7,7 @@
     * [Properties to be configured](#propertiestobeconfigured)
 + [Customize It!](#customizeit)
     * [config.xml](#configxml)
+    * [endpoints.xml](#endpointsxml)
     * [businessLogic.xml](#businesslogicxml)
     * [errorHandling.xml](#errorhandlingxml)
 
@@ -14,7 +15,7 @@
 # Use Case <a name="usecase"/>
 As a Salesforce admin I want to syncronize contacts between two Salesfoce orgs.
 
-This Kick (template) should serve as a foundation for setting an online sync of Contacts from one SalesForce instance to another. Everytime there is a new Contact or a change in an already existing one, SFDC Streaming API will notify this integration that will be responsible for updating the Contact on the target org.
+This Kick (template) should serve as a foundation for setting an online sync of Contacts from one SalesForce instance to another. The integration will be polling during a certain defined period to find if there are new Contacs or modified ones that meet the requirements configured in the query, since the last query (by using watermarking Mule feature). If there are results, they will be either created or updated in the target instance. 
 
 Requirements have been set not only to be used as examples, but also to stablish starting point to adapt your integration to your requirements.
 
@@ -40,11 +41,14 @@ Once your app is all set and started, there is no need to do anything else. Ever
 
 ## Properties to be configured (With examples) <a name="propertiestobeconfigured"/>
 
-In order to use this Mule Kick you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. Detail list with examples:
+In order to use this Mule Kick you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. 
+Polling Frecuency is expressed in miliseconds (different time units can be used) and the Watermark Default Expression defines the date to be used to query the first time the integration runs. [More details about polling and watermarking.](http://www.mulesoft.org/documentation/display/current/Poll+Reference)
+The date format accepted in SFDC Query Language is either YYYY-MM-DDThh:mm:ss+hh:mm or you can use Constans. [More information about Dates in SFDC.](http://www.salesforce.com/us/developer/docs/officetoolkit/Content/sforce_api_calls_soql_select_dateformats.htm)
+Detail list with examples:
 
 ### Application configuration
-+ polling.frequency  
-+ watermark.default.expression
++ polling.frequency `10000`  
++ watermark.default.expression `YESTERDAY`
 
 #### SalesForce Connector configuration for company A
 + sfdc.a.username `bob.dylan@orga`
@@ -69,6 +73,7 @@ Of course more files will be found such as Test Classes and [Mule Application Fi
 Here is a list of the main XML files you'll find in this application:
 
 * [config.xml](#configxml)
+* [endpoints.xml](#endpointsxml)
 * [businessLogic.xml](#businesslogicxml)
 * [errorHandling.xml](#errorhandlingxml)
 
@@ -78,9 +83,19 @@ Configuration for Connectors and [Properties Place Holders](http://www.mulesoft.
 
 In the visual editor they can be found on the *Global Element* tab.
 
+## endpoints.xml<a name="endpointsxml"/>
+This flows consists mainly on the logic to bring created and updated Contacts from SFDC Instance a:
++ SFDC Query with filters applied to bring only Contacts with an email to be used to identify exiting customer on target instance. Also Mailing Country as "US", "U.S." or "United Stated" is applied as a filter in the query to provide and example as explained before.
++ Polling configured to execute the query every certain period of time.
++ Query will bring results since last integration run in oder to have only **new** updated or creations. This is done by using Mule Watermarking feature: watermark will be used in SFDC query and updated everytime the integration runs without exceptions. The actual watermark is the greatest LastModifiedDate of the Contacts brought in the query done. This can be addapted to different needs and there is an interesting [blog](http://blogs.mulesoft.org/data-synchronizing-made-easy-with-mule-watermarks/) about this feature.
++ Default watermark expression is configured here as well.
 
 ## businessLogic.xml<a name="businesslogicxml"/>
-TBD
+Creation/update of Contacts is managed on this file. For all the records received on the inbound stage, two high level steps (flows) do the work here:
+
++ **processDataFlow:** For each Contact received the integration check if it does not exists on target system or if it does to add the foreign Id (Query to SFDC Target instance). After this, LastModifiedDate value is removed to accomplish SFDC API restrictions and is added to a List that contains all Contacts to be synced.
+
++ **outboundFlow:** Once all the records have been processed, the list where they were being gathered is set as payload and they are migrated to the target instance using Upsert method of SFDC Connector.
 
 
 ## errorHandling.xml<a name="errorhandlingxml"/>
