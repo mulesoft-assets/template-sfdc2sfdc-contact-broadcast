@@ -10,14 +10,13 @@ xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
-    <flow name="businessLogicFlow" processingStrategy="synchronous" doc:name="businessLogicFlow">
-        <poll doc:name="Poll">
-            <fixed-frequency-scheduler frequency="${polling.frequency}" />
-            <watermark variable="lastQueryDate" default-expression="${watermark.default.expression}" selector="MAX" selector-expression="#[payload.LastModifiedDate]"/>
-            <sfdc:query-all config-ref="SalesforceA"   doc:name="Fetch Contacts with filtering criteria" query="SELECT Email, FirstName, LastName, Id, LastModifiedDate FROM Contact WHERE LastModifiedDate &gt; #[flowVars['lastQueryDate']] AND Email != null AND MailingCountry IN ('U.S.','United States','US')">
-            </sfdc:query-all>
-        </poll>
-        <logger message="#[payload]" level="INFO" doc:name="Log Contacts created/updated"/>
+    <flow name="mainFlow" processingStrategy="synchronous" doc:name="mainFlow">
+        <flow-ref name="processDataFlow" doc:name="call processDataFlow"/>
+        <flow-ref name="outboundFlow" doc:name="call outboundFlow"/>
+    	<exception-strategy ref="defaultChoiceExceptionStrategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    
+    <flow name="processDataFlow" processingStrategy="synchronous" doc:name="processDataFlow">
         <set-variable variableName="contactList" value="#[new java.util.ArrayList()]" doc:name="set contactList variable"/>
         <foreach doc:name="For Each">
    	        <enricher source="#[payload]" target="#[flowVars['idInB']]" doc:name="Store in variable idInB">
@@ -32,6 +31,9 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
   			</expression-component>
   			<expression-component doc:name="Add Contact to contactList"><![CDATA[contactList.add(payload)]]></expression-component>
         </foreach>
+    </flow>
+    
+   <flow name="outboundFlow" processingStrategy="synchronous" doc:name="outboundFlow">
         <set-payload value="#[contactList]" doc:name="Set contactList as Payload"/>
         <logger message="#[payload]" level="INFO" doc:name="Log Contacts to be created/updated"/>
         <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="Create/Update Contacts in Org B">
