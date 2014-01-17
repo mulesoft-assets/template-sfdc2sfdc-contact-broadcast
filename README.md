@@ -42,8 +42,11 @@ Once your app is all set and started, there is no need to do anything else. Ever
 ## Properties to be configured (With examples) <a name="propertiestobeconfigured"/>
 
 In order to use this Mule Kick you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. 
+
 Polling Frecuency is expressed in miliseconds (different time units can be used) and the Watermark Default Expression defines the date to be used to query the first time the integration runs. [More details about polling and watermarking.](http://www.mulesoft.org/documentation/display/current/Poll+Reference)
-The date format accepted in SFDC Query Language is either YYYY-MM-DDThh:mm:ss+hh:mm or you can use Constans. [More information about Dates in SFDC.](http://www.salesforce.com/us/developer/docs/officetoolkit/Content/sforce_api_calls_soql_select_dateformats.htm)
+
+The date format accepted in SFDC Query Language is either YYYY-MM-DDThh:mm:ss+hh:mm or you can use Constants (Like YESTERDAY in the example). [More information about Dates in SFDC.](http://www.salesforce.com/us/developer/docs/officetoolkit/Content/sforce_api_calls_soql_select_dateformats.htm)
+
 Detail list with examples:
 
 ### Application configuration
@@ -84,10 +87,10 @@ Configuration for Connectors and [Properties Place Holders](http://www.mulesoft.
 In the visual editor they can be found on the *Global Element* tab.
 
 ## endpoints.xml<a name="endpointsxml"/>
-This flows consists mainly on the logic to bring created and updated Contacts from SFDC Instance a:
+This flows consists mainly on the logic to bring created and updated Contacts from SFDC Instance A:
 + SFDC Query with filters applied to bring only Contacts with an email to be used to identify exiting customer on target instance. Also Mailing Country as "US", "U.S." or "United Stated" is applied as a filter in the query to provide and example as explained before.
 + Polling configured to execute the query every certain period of time.
-+ Query will bring results since last integration run in oder to have only **new** updated or creations. This is done by using Mule Watermarking feature: watermark will be used in SFDC query and updated everytime the integration runs without exceptions. The actual watermark is the greatest LastModifiedDate of the Contacts brought in the query done. This can be addapted to different needs and there is an interesting [blog](http://blogs.mulesoft.org/data-synchronizing-made-easy-with-mule-watermarks/) about this feature.
++ Query will bring results since last integration run in oder to have only **new** updated or creations. This is done by using Mule Watermarking feature: watermark will be used in SFDC query and updated everytime the integration runs without exceptions. The actual watermark is the greatest LastModifiedDate of the Contacts brought in the query done. This can be addapted to different needs and there is an [interesting blog about this feature.](http://blogs.mulesoft.org/data-synchronizing-made-easy-with-mule-watermarks/)
 + Default watermark expression is configured here as well.
 
 ## businessLogic.xml<a name="businesslogicxml"/>
