@@ -10,36 +10,38 @@ xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
-    <flow name="mainFlow" processingStrategy="synchronous" doc:name="mainFlow">
+    <flow name="mainFlow" processingStrategy="synchronous" doc:name="mainFlow" doc:description="This flow is the entry point to the Kick business logic.
+
+This flow should control the direction of the application, and it should be called by the different endpoints that your Kick exposes to trigger it.">
         <flow-ref name="processDataFlow" doc:name="call processDataFlow"/>
         <flow-ref name="outboundFlow" doc:name="call outboundFlow"/>
-    	<exception-strategy ref="defaultChoiceExceptionStrategy" doc:name="Reference Exception Strategy"/>
+    	<exception-strategy ref="defaultChoiceExceptionStrategy" doc:name="catch Exception and call defaultChoiceExceptionStrategy"/>
     </flow>
     
     <flow name="processDataFlow" processingStrategy="synchronous" doc:name="processDataFlow">
         <set-variable variableName="contactList" value="#[new java.util.ArrayList()]" doc:name="set contactList variable"/>
         <foreach doc:name="For Each">
-   	        <enricher source="#[payload]" target="#[flowVars['idInB']]" doc:name="Store in variable idInB">
-        		<sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="Check contact in org B"/>
+   	        <enricher source="#[payload]" target="#[flowVars['idInB']]" doc:name="store payload in variable idInB">
+        		<sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="check Contact in org B"/>
         	</enricher>
-        	<expression-component doc:name="Setting ID for Upsert"><![CDATA[if (flowVars['idInB'] instanceof NullPayload) {
+        	<expression-component doc:name="set Id for upsert"><![CDATA[if (flowVars['idInB'] instanceof NullPayload) {
          		payload.remove('Id') 
       		} else { 
         			payload.put('Id',flowVars['idInB'].get('Id'))}]]> 
   			</expression-component>
-            <expression-component doc:name="Removing LastModifiedDate for Upsert"><![CDATA[payload.remove('LastModifiedDate')]]> 
+            <expression-component doc:name="remove LastModifiedDate for upsert"><![CDATA[payload.remove('LastModifiedDate')]]> 
   			</expression-component>
-  			<expression-component doc:name="Add Contact to contactList"><![CDATA[contactList.add(payload)]]></expression-component>
+  			<expression-component doc:name="add Contact to contactList"><![CDATA[contactList.add(payload)]]></expression-component>
         </foreach>
     </flow>
     
    <flow name="outboundFlow" processingStrategy="synchronous" doc:name="outboundFlow">
-        <set-payload value="#[contactList]" doc:name="Set contactList as Payload"/>
-        <logger message="#[payload]" level="INFO" doc:name="Log Contacts to be created/updated"/>
-        <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="Create/Update Contacts in Org B">
+        <set-payload value="#[contactList]" doc:name="set to contactList"/>
+        <logger message="#[payload]" level="INFO" doc:name="log Contacts to be created/updated"/>
+        <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="upsert Contacts in Org B">
             <sfdc:objects ref="#[payload]"/>
         </sfdc:upsert>
-        <logger message="#[payload]" level="INFO" doc:name="Log Upsert Result"/>
+        <logger message="#[payload]" level="INFO" doc:name="log upsert result"/>
     </flow>
 
 </mule>

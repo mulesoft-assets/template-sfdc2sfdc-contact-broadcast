@@ -4,7 +4,13 @@
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd">
-    <flow name="inboundFlow" processingStrategy="synchronous"  doc:name="inboundFlow">
+    <flow name="inboundFlow" processingStrategy="synchronous"  doc:name="inboundFlow" doc:description="This is the simpliest entry point to start the excecution of your Kick
+Here you should: 
+	* Configure the inbound endpoint, in this case a polling to fetch data from origin system
+	* Handle any input parameter and set the scope of it so the main logic does not care from where it is called
+Here you should not: 
+	* Run validations against external systems
+	* Choose flow of you application based on input parameters">
     	<poll doc:name="Poll">
             <fixed-frequency-scheduler frequency="${polling.frequency}" />
             <watermark variable="lastQueryDate" default-expression="${watermark.default.expression}" selector="MAX" selector-expression="#[payload.LastModifiedDate]"/>
