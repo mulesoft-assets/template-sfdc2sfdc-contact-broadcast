@@ -22,7 +22,7 @@ public abstract class AssertionProbe implements Probe {
 
     @Override
     public String describeFailure() {
-        return "Assention";
+        return "Assertion";
     }
 
     public abstract void assertSatisfied() throws Exception;
