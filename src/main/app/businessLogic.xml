@@ -13,10 +13,11 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
-    <batch:job name="businessLogicBatch1">
+    <batch:job name="businessLogicBatch">
+        <batch:threading-profile poolExhaustedAction="WAIT"/>
         <batch:input>
-           	<poll doc:name="fireup Custom object synchronization" >
-            	<fixed-frequency-scheduler frequency="${polling.frequency}" />
+           	<poll doc:name="fireup Contact synchronization" >
+            	<fixed-frequency-scheduler frequency="${polling.frequency}" startDelay="${polling.startDelayMillis}"/>
             	<watermark variable="lastQueryDate" default-expression="${watermark.default.expression}" selector="MAX" selector-expression="#[payload.LastModifiedDate]"/>
              	<sfdc:query-all config-ref="SalesforceA"   doc:name="query Contacts with filtering criteria from Salesforce Instance A" query="SELECT Email, FirstName, LastName, Id, LastModifiedDate, MailingCity, MailingState, MailingCountry, MailingPostalCode, Title FROM Contact WHERE LastModifiedDate &gt; #[flowVars['lastQueryDate']] AND Email != null AND MailingCountry IN ('U.S.','United States','US')">
             	</sfdc:query-all>
@@ -37,7 +38,7 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
 	            <expression-component doc:name="remove LastModifiedDate for upsert"><![CDATA[payload.remove('LastModifiedDate')]]> 
 	  			</expression-component>
                 <batch:commit size="200" doc:name="Batch Commit" >
-                	<logger message="Custom objects to update/create: #[payload]"	level="INFO" doc:name="log Custom objects to update/create" />
+                	<logger message="Contact to update/create: #[payload]"	level="INFO" doc:name="log 'Contact objects to update/create'" />
            	        <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="upsert Contacts in Org B">
             			<sfdc:objects ref="#[payload]"/>
         			</sfdc:upsert>
@@ -46,7 +47,7 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
         </batch:process-records>
         <batch:on-complete>
 			<json:object-to-json-transformer	doc:name="transform BatchJobInstance to JSON" />
-			<logger level="INFO" doc:name="log 'Migration process has finished'" message="One Way Sync has finished: #[payload]"/>
+			<logger level="INFO" doc:name="log 'One Way Sync has finished'" message="One Way Sync has finished: #[payload]"/>
         </batch:on-complete>
     </batch:job>
 

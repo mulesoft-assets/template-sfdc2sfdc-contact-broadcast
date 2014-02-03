@@ -1,4 +1,4 @@
-# Mule Kick: SFDC to SFDC Automatic Contact Sync
+# Mule Kick: SFDC to SFDC Contact One Way Sync
 
 + [Use Case](#usecase)
 + [Run it!](#runit)
@@ -7,24 +7,27 @@
     * [Properties to be configured](#propertiestobeconfigured)
 + [Customize It!](#customizeit)
     * [config.xml](#configxml)
-    * [endpoints.xml](#endpointsxml)
+    * [inboundEndpoints.xml](#inboundendpointsxml)
     * [businessLogic.xml](#businesslogicxml)
     * [errorHandling.xml](#errorhandlingxml)
-
++ [Testing the Kick](#testingthekick)
+ 
 
 # Use Case <a name="usecase"/>
-As a Salesforce admin I want to syncronize contacts between two Salesfoce orgs.
+As a Salesforce admin I want to syncronize Contacts between two Salesfoce orgs.
 
-This Kick (template) should serve as a foundation for setting an online sync of Contacts from one SalesForce instance to another. The integration will be polling during a certain defined period to find if there are new Contacs or modified ones that meet the requirements configured in the query, since the last query (by using watermarking Mule feature). If there are results, they will be either created or updated in the target instance. 
+This Kick (template) should serve as a foundation for setting an online sync of Contact from one SalesForce instance to another. Everytime there is a new Contact or a change in an already existing one, the integration will poll for changes in SalesForce source instance and it will be responsible for updating the Contact on the target org.
 
-Requirements have been set not only to be used as examples, but also to stablish starting point to adapt your integration to your requirements.
+Requirements have been set not only to be used as examples, but also to establish a starting point to adapt your integration to your requirements.
+
+As implemented, this Kick leverage the [Batch Module](http://www.mulesoft.org/documentation/display/current/Batch+Processing).
+The batch job is divided in Input, Process and On Complete stages.
+During the Input stage the Kick will go to the SalesForce Org A and query all the existing users that match the filter criteria.
+During the Process stage, each SFDC User will be filtered depending on, if it has an existing matching user in the SFDC Org B.
+The last step of the Process stage will group the users and create/update them in SFDC Org B.
+Finally during the On Complete stage the Kick will logoutput statistics data into the console.
 
 # Run it!
-
-On either environment (CloudHub or On Premise) this Kick is configured to filter Contacts with a certain criteria that should be used as an example to build your own. 
-In this case, Contacts will be synced from origin instance only if they have an Email set and the Mailing Country is either "United States", "US" or "U.S.". All this are set in the Query so the filtering is done on SalesForce side lowering the load of data transfered to the integration, in order to make it more efficient.
-
-
 
 ## Running on CloudHub <a name="runoncloudhub"/>
 
@@ -36,34 +39,29 @@ Once your app is all set and started, there is no need to do anything else. Ever
 ## Running on premise <a name="runonopremise"/>
 Complete all properties in one of the property files, for example in [mule.prod.properties] (../blob/master/src/main/resources/mule.prod.properties) and run your app with the corresponding environment variable to use it. To follow the example, this will be `mule.env=prod`.
 
-Once your app is all set and started, there is no need to do anything else. Every time a Contact is created or modified, it will be automatically synchronised to SFDC Org B as long as it has an Email.
-
+Once your app is all set and started, there is no need to do anything else. The application will poll SalesForce to know if there are any newly created or updated objects and synchronice them.
 
 ## Properties to be configured (With examples) <a name="propertiestobeconfigured"/>
 
-In order to use this Mule Kick you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. 
-
-Polling Frecuency is expressed in miliseconds (different time units can be used) and the Watermark Default Expression defines the date to be used to query the first time the integration runs. [More details about polling and watermarking.](http://www.mulesoft.org/documentation/display/current/Poll+Reference)
-
-The date format accepted in SFDC Query Language is either YYYY-MM-DDThh:mm:ss+hh:mm or you can use Constants (Like YESTERDAY in the example). [More information about Dates in SFDC.](http://www.salesforce.com/us/developer/docs/officetoolkit/Content/sforce_api_calls_soql_select_dateformats.htm)
-
-Detail list with examples:
+In order to use this Mule Kick you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. Detail list with examples:
 
 ### Application configuration
-+ polling.frequency `10000`  
-+ watermark.default.expression `YESTERDAY`
++ http.port `9090` 
++ polling.frequency `60000`
++ poll.startDelayMillis `0`
++ watermark.defaultExpression `YESTERDAY`
 
 #### SalesForce Connector configuration for company A
 + sfdc.a.username `bob.dylan@orga`
 + sfdc.a.password `DylanPassword123`
 + sfdc.a.securityToken `avsfwCUl7apQs56Xq2AKi3X`
-+ sfdc.a.url `https://login.salesforce.com/services/Soap/u/26.0`
++ sfdc.a.url `https://login.salesforce.com/services/Soap/u/28.0`
 
 #### SalesForce Connector configuration for company B
 + sfdc.b.username `joan.baez@orgb`
 + sfdc.b.password `JoanBaez456`
 + sfdc.b.securityToken `ces56arl7apQs56XTddf34X`
-+ sfdc.b.url `https://login.salesforce.com/services/Soap/u/26.0`
++ sfdc.b.url `https://login.salesforce.com/services/Soap/u/28.0`
 
 
 
@@ -76,7 +74,7 @@ Of course more files will be found such as Test Classes and [Mule Application Fi
 Here is a list of the main XML files you'll find in this application:
 
 * [config.xml](#configxml)
-* [endpoints.xml](#endpointsxml)
+* [inboundEndpoints.xml](#inboundendpointsxml)
 * [businessLogic.xml](#businesslogicxml)
 * [errorHandling.xml](#errorhandlingxml)
 
@@ -86,20 +84,33 @@ Configuration for Connectors and [Properties Place Holders](http://www.mulesoft.
 
 In the visual editor they can be found on the *Global Element* tab.
 
-## endpoints.xml<a name="endpointsxml"/>
-This flows consists mainly on the logic to bring created and updated Contacts from SFDC Instance A:
-+ SFDC Query with filters applied to bring only Contacts with an email to be used to identify exiting customer on target instance. Also Mailing Country as "US", "U.S." or "United Stated" is applied as a filter in the query to provide and example as explained before.
-+ Polling configured to execute the query every certain period of time.
-+ Query will bring results since last integration run in oder to have only **new** updated or creations. This is done by using Mule Watermarking feature: watermark will be used in SFDC query and updated everytime the integration runs without exceptions. The actual watermark is the greatest LastModifiedDate of the Contacts brought in the query done. This can be addapted to different needs and there is an [interesting blog about this feature.](http://blogs.mulesoft.org/data-synchronizing-made-easy-with-mule-watermarks/)
-+ Default watermark expression is configured here as well.
 
 ## businessLogic.xml<a name="businesslogicxml"/>
-Creation/update of Contacts is managed on this file. For all the records received on the inbound stage, two high level steps (flows) do the work here:
+Functional aspect of the kick is implemented on this XML, directed by one flow that will poll for SalesForce creations/updates. The severeal message processors constitute four high level actions that fully implement the logic of this Kick:
 
-+ **processDataFlow:** For each Contact received the integration check if it does not exists on target system or if it does to add the foreign Id (Query to SFDC Target instance). After this, LastModifiedDate value is removed to accomplish SFDC API restrictions and is added to a List that contains all Contacts to be synced.
+1. During the Input stage the Kick will go to the SalesForce Org A and query all the existing users that match the filter criteria.
+2. During the Process stage, each SFDC User will be filtered depending on, if it has an existing matching user in the SFDC Org B.
+3. The last step of the Process stage will group the users and create/update them in SFDC Org B.
+Finally during the On Complete stage the Kick will logoutput statistics data into the console.
 
-+ **outboundFlow:** Once all the records have been processed, the list where they were being gathered is set as payload and they are migrated to the target instance using Upsert method of SFDC Connector.
-
+## inboundEndpoints.xml<a name="inboundendpointsxml"/>
+This is file is not used in this particular kick, but you'll oftenly find flows containing the inbound endpoints to start the integration.
 
 ## errorHandling.xml<a name="errorhandlingxml"/>
-Contains a [Catch Exception Strategy](http://www.mulesoft.org/documentation/display/current/Catch+Exception+Strategy) that is only Logging the exception thrown (If so). As you imagine, this is the right place to handle how your integration will react depending on the different exceptions. 
+Contains a [Catch Exception Strategy](http://www.mulesoft.org/documentation/display/current/Catch+Exception+Strategy) that is only Logging the exception thrown (If so). As you imagine, this is the right place to handle how your integration will react depending on the different exceptions.
+
+# Testing the Kick <a name="testingthekick"/>
+
+You will notice that the Kick has been shipped with test.
+These devidi them self into two categories:
+
++ Unit Tests
++ Integration Tests
+
+You can run any of them by just doing right click on the class and clicking on run as Junit test.
+
+Do bear in mind that you'll have to tell the test classes which property file to use.
+For you convinience we have added a file mule.test.properties located in "src/test/resources".
+In the run configurations of the test just make sure to add the following property:
+
++ -Dmule.env=test
