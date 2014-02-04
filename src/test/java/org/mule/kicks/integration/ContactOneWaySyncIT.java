@@ -4,14 +4,14 @@ import static junit.framework.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
-import org.junit.Before;
+import java.util.Date;
 import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.mule.MessageExchangePattern;
 import org.mule.api.MuleEvent;
@@ -19,8 +19,6 @@ import org.mule.api.MuleException;
 import org.mule.api.schedule.Scheduler;
 import org.mule.api.schedule.Schedulers;
 import org.mule.processor.chain.SubflowInterceptingChainLifecycleWrapper;
-import org.mule.tck.probe.PollingProber;
-import org.mule.tck.probe.Prober;
 import org.mule.transport.NullPayload;
 
 import com.sforce.soap.partner.SaveResult;
@@ -30,12 +28,13 @@ import com.sforce.soap.partner.SaveResult;
  * 
  * @author miguel.oliva
  */
-public class BusinessLogicTestIT extends AbstractKickTestCase {
+public class ContactOneWaySyncIT extends AbstractKickTestCase {
 
 	private static SubflowInterceptingChainLifecycleWrapper checkContactflow;
 	private static List<Map<String, String>> createdContactInA = new ArrayList<Map<String, String>>();
-
-	private final Prober workingPollProber = new PollingProber(360000, 2000);
+	private static final String POLL_FLOW_NAME = "businessLogicBatch";
+	private static final String KICK_NAME = "ContactOneWaySync";
+	
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -63,8 +62,8 @@ public class BusinessLogicTestIT extends AbstractKickTestCase {
 
 		final List<Map<String, String>> createdContactInB = new ArrayList<Map<String, String>>();
 		// This contact should BE synced (updated) as the mailing country is US and the record exists in the target system
-		createdContactInB.add(aContact().withProperty("FirstName", "Mario")
-										.withProperty("LastName", "Bofil")
+		createdContactInB.add(aContact().withProperty("FirstName", buildUniqueName(KICK_NAME,"Mario"))
+										.withProperty("LastName", buildUniqueName(KICK_NAME,"Bofil"))
 										.withProperty("Email", buildUniqueEmail("mario"))
 										.withProperty("MailingCountry", "United States")
 										.build());
@@ -76,32 +75,32 @@ public class BusinessLogicTestIT extends AbstractKickTestCase {
 		flow.initialise();
 
 		// This contact should not be synced as the mailing country is not US, U.S. or United States
-		createdContactInA.add(aContact().withProperty("FirstName", "Raul")
-										.withProperty("LastName", "Barboza")
+		createdContactInA.add(aContact().withProperty("FirstName", buildUniqueName(KICK_NAME,"Raul"))
+										.withProperty("LastName", buildUniqueName(KICK_NAME,"Barboza"))
 										.withProperty("Email", buildUniqueEmail("raul"))
 										.withProperty("MailingCountry", "Argentina")
 										.build());
 
 		// This contact should not be synced as the mailing country is not US,
 		// U.S. or United States
-		createdContactInA.add(aContact().withProperty("FirstName", "Julian")
-										.withProperty("LastName", "Zini")
+		createdContactInA.add(aContact().withProperty("FirstName", buildUniqueName(KICK_NAME,"Julian"))
+										.withProperty("LastName", buildUniqueName(KICK_NAME,"Zini"))
 										.withProperty("Email", buildUniqueEmail("julian"))
 										.withProperty("MailingCountry", "Argentina")
 										.build());
 
 		// This contact should BE synced (inserted) as the mailing country is
 		// U.S. and the record doesn't exist in the target system
-		createdContactInA.add(aContact().withProperty("FirstName", "Rodolfo")
-										.withProperty("LastName", "Regunaga")
+		createdContactInA.add(aContact().withProperty("FirstName", buildUniqueName(KICK_NAME,"Rodolfo"))
+										.withProperty("LastName", buildUniqueName(KICK_NAME,"Regunaga"))
 										.withProperty("Email", buildUniqueEmail("rodolfo"))
 										.withProperty("MailingCountry", "U.S.")
 										.build());
 
 		// This contact should BE synced (updated) as the mailing country is
 		// U.S. and the record exists in the target system
-		createdContactInA.add(aContact().withProperty("FirstName", "Marito")
-										.withProperty("LastName", "Bofil")
+		createdContactInA.add(aContact().withProperty("FirstName", buildUniqueName(KICK_NAME,"Marito"))
+										.withProperty("LastName", buildUniqueName(KICK_NAME,"Bofil"))
 										.withProperty("Email", buildUniqueEmail("marito"))
 										.withProperty("MailingCountry", "United States")
 										.build());
@@ -120,7 +119,7 @@ public class BusinessLogicTestIT extends AbstractKickTestCase {
 
 	@After
 	public void tearDown() throws Exception {
-		stopSchedulers();
+		stopFlowSchedulers(POLL_FLOW_NAME);
 
 		// Delete the created contacts in A
 		SubflowInterceptingChainLifecycleWrapper flow = getSubFlow("deleteContactFromAFlow");
@@ -148,38 +147,40 @@ public class BusinessLogicTestIT extends AbstractKickTestCase {
 
 	@Test
 	public void testMainFlow() throws Exception {
-		workingPollProber.check(new AssertionProbe() {
-			@Override
-			public void assertSatisfied() throws Exception {
-				// Assert first object was not synced
-				assertEquals("The contact should not have been sync", null, invokeRetrieveContactFlow(checkContactflow, createdContactInA.get(0)));
 
-				// Assert second object was not synced
-				assertEquals("The contact should not have been sync", null, invokeRetrieveContactFlow(checkContactflow, createdContactInA.get(1)));
+		System.out.println("About to run poll");
 
-				// Assert third object was created in target system
-				Map<String, String> payload = invokeRetrieveContactFlow(checkContactflow, createdContactInA.get(2));
-				assertEquals("The contact should have been sync", createdContactInA.get(2)
-																					.get("Email"), payload.get("Email"));
+		runSchedulersOnce(POLL_FLOW_NAME);
 
-				// Assert fourth object was updated in target system
-				final Map<String, String> fourthContact = createdContactInA.get(3);
-				payload = invokeRetrieveContactFlow(checkContactflow, fourthContact);
-				assertEquals("The contact should have been sync (Email)", fourthContact.get("Email"), payload.get("Email"));
-				assertEquals("The contact should have been sync (FirstName)", fourthContact.get("FirstName"), payload.get("FirstName"));
+		System.out.println("Poll runned");
 
-			}
-		});
+		// Assert first object was not synced
+		assertEquals("The contact should not have been sync", null, invokeRetrieveContactFlow(checkContactflow, createdContactInA.get(0)));
+
+		// Assert second object was not synced
+		assertEquals("The contact should not have been sync", null, invokeRetrieveContactFlow(checkContactflow, createdContactInA.get(1)));
+
+		// Assert third object was created in target system
+		Map<String, String> payload = invokeRetrieveContactFlow(checkContactflow, createdContactInA.get(2));
+		assertEquals("The contact should have been sync", createdContactInA.get(2)
+																			.get("Email"), payload.get("Email"));
+
+		// Assert fourth object was updated in target system
+		final Map<String, String> fourthContact = createdContactInA.get(3);
+		payload = invokeRetrieveContactFlow(checkContactflow, fourthContact);
+		assertEquals("The contact should have been sync (Email)", fourthContact.get("Email"), payload.get("Email"));
+		assertEquals("The contact should have been sync (FirstName)", fourthContact.get("FirstName"), payload.get("FirstName"));
+
 	}
 
-	private void stopSchedulers() throws MuleException {
-		final Collection<Scheduler> schedulers = muleContext.getRegistry()
-															.lookupScheduler(Schedulers.flowPollingSchedulers("businessLogicFlow"));
-
-		for (final Scheduler scheduler : schedulers) {
-			scheduler.stop();
-		}
-	}
+//	private void stopSchedulers() throws MuleException {
+//		final Collection<Scheduler> schedulers = muleContext.getRegistry()
+//															.lookupScheduler(Schedulers.flowPollingSchedulers("businessLogicFlow"));
+//
+//		for (final Scheduler scheduler : schedulers) {
+//			scheduler.stop();
+//		}
+//	}
 
 	@SuppressWarnings("unchecked")
 	private Map<String, String> invokeRetrieveContactFlow(final SubflowInterceptingChainLifecycleWrapper flow, final Map<String, String> contact) throws Exception {

@@ -2,11 +2,16 @@ package org.mule.kicks.integration;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Properties;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.mule.api.MuleException;
 import org.mule.api.config.MuleProperties;
+import org.mule.api.schedule.Scheduler;
+import org.mule.api.schedule.Schedulers;
 import org.mule.construct.Flow;
 import org.mule.processor.chain.SubflowInterceptingChainLifecycleWrapper;
 import org.mule.tck.junit4.FunctionalTestCase;
@@ -27,8 +32,9 @@ public class AbstractKickTestCase extends FunctionalTestCase {
 	}
 
 	@AfterClass
-	public static void afterClass() { 
-		System.getProperties().remove("mule.env");
+	public static void afterClass() {
+		System.getProperties()
+				.remove("mule.env");
 	}
 
 	@Override
@@ -53,8 +59,11 @@ public class AbstractKickTestCase extends FunctionalTestCase {
 		File[] listOfFiles = testFlowsFolder.listFiles();
 		if (listOfFiles != null) {
 			for (File f : listOfFiles) {
-				if (f.isFile() && f.getName().endsWith("xml")) {
-					resources.append(",").append(TEST_FLOWS_FOLDER_PATH).append(f.getName());
+				if (f.isFile() && f.getName()
+									.endsWith("xml")) {
+					resources.append(",")
+								.append(TEST_FLOWS_FOLDER_PATH)
+								.append(f.getName());
 				}
 			}
 			return resources.toString();
@@ -76,11 +85,43 @@ public class AbstractKickTestCase extends FunctionalTestCase {
 	}
 
 	protected Flow getFlow(String flowName) {
-		return (Flow) muleContext.getRegistry().lookupObject(flowName);
+		return (Flow) muleContext.getRegistry()
+									.lookupObject(flowName);
 	}
 
 	protected SubflowInterceptingChainLifecycleWrapper getSubFlow(String flowName) {
-		return (SubflowInterceptingChainLifecycleWrapper) muleContext.getRegistry().lookupObject(flowName);
+		return (SubflowInterceptingChainLifecycleWrapper) muleContext.getRegistry()
+																		.lookupObject(flowName);
+	}
+
+	protected void runSchedulersOnce(String flowName) throws Exception {
+		final Collection<Scheduler> schedulers = muleContext.getRegistry()
+															.lookupScheduler(Schedulers.flowPollingSchedulers(flowName));
+
+		for (final Scheduler scheduler : schedulers) {
+			scheduler.schedule();
+		}
+	}
+
+	protected void stopFlowSchedulers(String flowName) throws MuleException {
+		final Collection<Scheduler> schedulers = muleContext.getRegistry()
+															.lookupScheduler(Schedulers.flowPollingSchedulers(flowName));
+
+		for (final Scheduler scheduler : schedulers) {
+			scheduler.stop();
+		}
+	}
+
+	protected String buildUniqueName(String kickName, String name) {
+		String timeStamp = new Long(new Date().getTime()).toString();
+
+		StringBuilder builder = new StringBuilder();
+		builder.append(name);
+		builder.append(kickName);
+		builder.append(timeStamp);
+
+		return builder.toString();
+
 	}
 
 }
