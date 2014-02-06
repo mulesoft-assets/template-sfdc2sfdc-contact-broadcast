@@ -51,7 +51,7 @@ public class ContactOneWaySyncIT extends AbstractKickTestCase {
 	private static List<Map<String, Object>> createdContactInA = new ArrayList<Map<String, Object>>();
 
 	private static final String POLL_FLOW_NAME = "triggerFlow";
-	private static final String KICK_NAME = "ContactOneWaySync";
+	private static final String KICK_NAME = "contactonewaysync";
 	private static final int TIMEOUT = 60;
 
 	private final PipelineSynchronizeListener pipelineListener = new PipelineSynchronizeListener(POLL_FLOW_NAME);
