@@ -46,7 +46,6 @@ Once your app is all set and started, there is no need to do anything else. The 
 In order to use this Mule Kick you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. Detail list with examples:
 
 ### Application configuration
-+ http.port `9090` 
 + polling.frequency `60000`
 + poll.startDelayMillis `0`
 + watermark.defaultExpression `YESTERDAY`
@@ -86,15 +85,15 @@ In the visual editor they can be found on the *Global Element* tab.
 
 
 ## businessLogic.xml<a name="businesslogicxml"/>
-Functional aspect of the kick is implemented on this XML, directed by one flow that will poll for SalesForce creations/updates. The severeal message processors constitute four high level actions that fully implement the logic of this Kick:
+Functional aspect of the kick is implemented on this XML, directed by a batch job that will be responsible for creations/updates. The severeal message processors constitute four high level actions that fully implement the logic of this Kick:
 
-1. During the Input stage the Kick will go to the SalesForce Org A and query all the existing users that match the filter criteria.
+1. Job execution is invoked from triggerFlow (inboundEndpoints.xml) everytime there is a new query executed asking for created/updated Contacts.
 2. During the Process stage, each SFDC User will be filtered depending on, if it has an existing matching user in the SFDC Org B.
 3. The last step of the Process stage will group the users and create/update them in SFDC Org B.
 Finally during the On Complete stage the Kick will logoutput statistics data into the console.
 
 ## inboundEndpoints.xml<a name="inboundendpointsxml"/>
-This is file is not used in this particular kick, but you'll oftenly find flows containing the inbound endpoints to start the integration.
+This is file is conformed by a Flow containing the Poll that will periodically query Sales Force for updated/created Contacts that meet the defined criteria in the query. And then executing the batch job process with the query results.
 
 ## errorHandling.xml<a name="errorhandlingxml"/>
 Contains a [Catch Exception Strategy](http://www.mulesoft.org/documentation/display/current/Catch+Exception+Strategy) that is only Logging the exception thrown (If so). As you imagine, this is the right place to handle how your integration will react depending on the different exceptions.
