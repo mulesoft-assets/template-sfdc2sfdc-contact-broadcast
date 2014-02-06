@@ -15,14 +15,6 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
     <batch:job name="businessLogicBatch">
         <batch:threading-profile poolExhaustedAction="WAIT"/>
-        <batch:input>
-           	<poll doc:name="fireup Contact synchronization" >
-            	<fixed-frequency-scheduler frequency="${polling.frequency}" startDelay="${polling.startDelayMillis}"/>
-            	<watermark variable="lastQueryDate" default-expression="${watermark.default.expression}" selector="MAX" selector-expression="#[payload.LastModifiedDate]"/>
-             	<sfdc:query-all config-ref="SalesforceA"   doc:name="query Contacts with filtering criteria from Salesforce Instance A" query="SELECT Email, FirstName, LastName, Id, LastModifiedDate, MailingCity, MailingState, MailingCountry, MailingPostalCode, Title FROM Contact WHERE LastModifiedDate &gt; #[flowVars['lastQueryDate']] AND Email != null AND MailingCountry IN ('U.S.','United States','US')">
-            	</sfdc:query-all>
-        	</poll>
-        </batch:input>
         <batch:process-records>
             <batch:step name="foreachContactInAGetContactBStep">
             	<enricher source="#[payload]" target="#[recordVars['idInB']]" doc:name="store payload in variable idInB">
