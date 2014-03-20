@@ -1,4 +1,4 @@
-package org.mule.kicks.builders;
+package org.mule.templates.builders;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class SfdcObjectBuilder {
 	public static SfdcObjectBuilder aUser() {
 		return new SfdcObjectBuilder();
 	}
-	
+
 	public static SfdcObjectBuilder anAccount() {
 		return new SfdcObjectBuilder();
 	}

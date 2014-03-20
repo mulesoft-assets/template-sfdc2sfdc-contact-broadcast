@@ -24,8 +24,8 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
         </sfdc:create>
         <logger level="INFO" message="Create Contacts in B result: #[payload]"/>
     </sub-flow>
-    <sub-flow name="retrieveContactFlow" doc:name="retrieveContactFlow">
-        <sfdc:query-single config-ref="SalesforceB" query="SELECT Id, FirstName, LastName, Email, MailingCountry FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="Salesforce"/>
+    <sub-flow name="retrieveContactFromBFlow" doc:name="retrieveContactFlow">
+        <sfdc:query-single config-ref="SalesforceB" query="SELECT Id, FirstName, LastName, Email, MailingCountry, AccountId FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="Salesforce"/>
         <logger level="INFO" message="Retrieve Contacts result: #[payload]"/>
     </sub-flow>
     <sub-flow name="deleteContactFromAFlow" doc:name="deleteContactFromAFlow">
@@ -39,5 +39,24 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
             <sfdc:ids ref="#[payload]"/>
         </sfdc:delete>
         <logger level="INFO" message="Remove Contacts from B result: #[payload]"/>
+    </sub-flow>
+    
+     <sub-flow name="createAccountFlow" doc:name="createAccountFlow">
+        <sfdc:create config-ref="SalesforceA" type="Account" doc:name="Salesforce">
+            <sfdc:objects ref="#[payload]"/>
+        </sfdc:create>
+    </sub-flow>
+    <sub-flow name="retrieveAccountFlowFromB" doc:name="retrieveAccountFlow">
+        <sfdc:query-single config-ref="SalesforceB" query="SELECT Id, Name FROM Account WHERE Name = '#[payload['Name']]'" doc:name="Salesforce"/>
+    </sub-flow>
+    <sub-flow name="deleteAccountFromAFlow" doc:name="deleteAccountFromAFlow">
+        <sfdc:delete config-ref="SalesforceA" doc:name="Salesforce">
+            <sfdc:ids ref="#[payload]"/>
+        </sfdc:delete>
+    </sub-flow>
+    <sub-flow name="deleteAccountFromBFlow" doc:name="deleteAccountFromBFlow">
+        <sfdc:delete config-ref="SalesforceB" doc:name="Salesforce">
+            <sfdc:ids ref="#[payload]"/>
+        </sfdc:delete>
     </sub-flow>
 </mule>

@@ -6,8 +6,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
     
-        <flow name="triggerFlow" doc:name="triggerFlow" processingStrategy="synchronous" doc:description="This is the simpliest entry point to start the excecution of your Kick
-Here you should: 
+        <flow name="triggerFlow" doc:name="triggerFlow" processingStrategy="synchronous" doc:description="This is the simpliest entry point to start the excecution of your Anypoint Template you should: 
 	* Define any inbound endpoint
 	* Handle any input parameter and transform it into the expected format by the mainFlow
 Here you should not: 
@@ -16,8 +15,8 @@ Here you should not:
        	<poll doc:name="fireup Contact synchronization" >
           	<fixed-frequency-scheduler frequency="${polling.frequency}" startDelay="${polling.startDelayMillis}"/>
           	<watermark variable="lastQueryDate" default-expression="${watermark.default.expression}" selector="MAX" selector-expression="#[payload.LastModifiedDate]"/>
-           	<sfdc:query-all config-ref="SalesforceA"   doc:name="query Contacts with filtering criteria from Salesforce Instance A" query="SELECT Email, FirstName, LastName, Id, LastModifiedDate, MailingCity, MailingState, MailingCountry, MailingPostalCode, Title FROM Contact WHERE LastModifiedDate &gt; #[flowVars['lastQueryDate']] AND Email != null AND MailingCountry IN ('U.S.','United States','US')">
-          	</sfdc:query-all>
+           	<sfdc:query config-ref="SalesforceA"  doc:name="query Contacts with filtering criteria from Salesforce Instance A" query="SELECT Email, FirstName, LastName, Id, LastModifiedDate, MailingCity, MailingState, MailingCountry, MailingPostalCode, Title, Account.Id, Account.Name, Account.AccountNumber, Account.AccountSource, Account.AnnualRevenue, Account.BillingCity, Account.BillingCountry, Account.BillingPostalCode, Account.BillingState, Account.BillingStreet, Account.Description, Account.Fax, Account.Industry, Account.NumberOfEmployees, Account.Ownership, Account.ParentId, Account.Phone, Account.Rating, Account.RecordTypeId, Account.ShippingCity, Account.ShippingCountry, Account.ShippingPostalCode, Account.ShippingState, Account.ShippingStreet, Account.Sic, Account.SicDesc, Account.Site, Account.TickerSymbol, Account.Type, Account.Website FROM Contact WHERE LastModifiedDate &gt; #[flowVars['lastQueryDate']] AND Email != null AND MailingCountry IN ('U.S.','United States','US')">
+          	</sfdc:query>
       	</poll>
         <batch:execute name="businessLogicBatch" doc:name="Batch Execute"/>
     </flow>
