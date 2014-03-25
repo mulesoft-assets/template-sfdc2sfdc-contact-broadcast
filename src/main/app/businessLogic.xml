@@ -76,7 +76,7 @@ payload.remove('LastModifiedDate');
         </batch:process-records>
         <batch:on-complete>
 			<json:object-to-json-transformer	doc:name="transform BatchJobInstance to JSON" />
-			<logger level="INFO" doc:name="log 'One Way Sync has finished'" message="One Way Sync has finished: #[payload]"/>
+			<logger level="INFO" doc:name="log 'broacast has finished'" message="One Way Sync has finished: #[payload]"/>
         </batch:on-complete>
     </batch:job>
 
