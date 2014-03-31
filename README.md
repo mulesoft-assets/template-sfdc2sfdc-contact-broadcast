@@ -5,6 +5,7 @@
     * [Running on premise](#runonopremise)
     * [Running on CloudHub](#runoncloudhub)
     * [Properties to be configured](#propertiestobeconfigured)
++ [API Calls](#apicalls)
 + [Customize It!](#customizeit)
     * [config.xml](#configxml)
     * [endpoints.xml](#endpointsxml)
@@ -104,6 +105,18 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 + sfdc.b.securityToken `ces56arl7apQs56XTddf34X`
 + sfdc.b.url `https://login.salesforce.com/services/Soap/u/26.0`
 
+
+# API Calls <a name="apicalls"/>
+
+SalesForce imposes limits on the number of API Calls that can be made. Therefore calculating this amount may be an important factor to consider. User Broadcast Template calls to the API can be calculated using the formula:
+
+***1 + X + X / 200***
+
+Being ***X*** the number of Users to be synchronized on each run. 
+
+The division by ***200*** is because, by default, Users are gathered in groups of 200 for each Upsert API Call in the commit step. Also consider that this calls are executed repeatedly every polling cycle.	
+
+For instance if 10 records are fetched from origin instance, then 12 api calls will be made (1 + 10 + 1).
 
 
 # Customize It!<a name="customizeit"/>
