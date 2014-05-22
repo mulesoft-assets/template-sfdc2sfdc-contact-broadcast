@@ -21,7 +21,7 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
         			<sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="query Contact from Salesforce Instance B"/>
         		</enricher>
             </batch:step>
-             <batch:step name="findOrCreateAccountInBSetp" filter-expression="! ('syncAccount'=='${account.sync.policy}')">
+             <batch:step name="findOrCreateAccountInBSetp" accept-expression="'syncAccount' == '${account.sync.policy}'">
                 <choice doc:name="Choice">
                 	<when expression="#[payload['Account'] != null]">
                 <enricher source="#[payload]" target="#[flowVars['accountInB']]" doc:name="store result in accountInB">
@@ -54,7 +54,7 @@ payload['Account'].put('NumberOfEmployees', payload['Account']['NumberOfEmployee
                     </otherwise>
                 </choice>
             </batch:step>
-            <batch:step name="setDummyAccountIdStep" filter-expression="! ('assignDummyAccount'=='${account.sync.policy}')">
+            <batch:step name="setDummyAccountIdStep" accept-expression="'assignDummyAccount' == '${account.sync.policy}'">
                 <expression-component doc:name="set Account ID"><![CDATA[payload.put('AccountId', '${account.id.in.b}');]]></expression-component>
             </batch:step>
             <batch:step name="foreachContactInAUpsertContactInBStep"> 
@@ -67,7 +67,7 @@ payload['Account'].put('NumberOfEmployees', payload['Account']['NumberOfEmployee
 payload.remove('LastModifiedDate');
 	  			]]></expression-component>
                 <batch:commit size="200" doc:name="Batch Commit" >
-                	<logger message="Contact to update/create: #[payload]"	level="INFO" doc:name="log 'Contact objects to update/create'" />
+                	<logger message="Contact to update/create: #[payload]" level="INFO" doc:name="log 'Contact objects to update/create'" />
            	        <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="upsert Contacts in Org B">
             			<sfdc:objects ref="#[payload]"/>
         			</sfdc:upsert>
@@ -75,7 +75,7 @@ payload.remove('LastModifiedDate');
             </batch:step>
         </batch:process-records>
         <batch:on-complete>
-			<json:object-to-json-transformer	doc:name="transform BatchJobInstance to JSON" />
+			<json:object-to-json-transformer doc:name="transform BatchJobInstance to JSON" />
 			<logger level="INFO" doc:name="log 'broacast has finished'" message="One Way Sync has finished: #[payload]"/>
         </batch:on-complete>
     </batch:job>
