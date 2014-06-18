@@ -58,7 +58,8 @@ payload['Account'].put('NumberOfEmployees', payload['Account']['NumberOfEmployee
                 <expression-component doc:name="set Account ID"><![CDATA[payload.put('AccountId', '${account.id.in.b}');]]></expression-component>
             </batch:step>
             <batch:step name="foreachContactInAUpsertContactInBStep"> 
-            	<expression-component doc:name="set Id for upsert"><![CDATA[if (recordVars['idInB'] instanceof NullPayload) {
+            	<expression-component doc:name="set Id for upsert"><![CDATA[payload.remove('Id');
+if (recordVars['idInB'] instanceof NullPayload) {
 		         		payload.remove('Id') 
 		      		} else { 
 		        			payload.put('Id',recordVars['idInB'].get('Id'))}]]> 
