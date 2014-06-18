@@ -65,12 +65,14 @@ payload['Account'].put('NumberOfEmployees', payload['Account']['NumberOfEmployee
 	  			</expression-component>
 	            <expression-component doc:name="remove LastModifiedDate for upsert"><![CDATA[payload.remove('Account');
 payload.remove('LastModifiedDate');
+payload.remove('LastModifiedById');
 	  			]]></expression-component>
                 <batch:commit size="200" doc:name="Batch Commit" >
                 	<logger message="Contact to update/create: #[payload]" level="INFO" doc:name="log 'Contact objects to update/create'" />
            	        <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="upsert Contacts in Org B">
             			<sfdc:objects ref="#[payload]"/>
         			</sfdc:upsert>
+                    <logger message="#[payload]" level="INFO" doc:name="log result"/>
                 </batch:commit>
             </batch:step>
         </batch:process-records>

@@ -29,7 +29,7 @@ import com.sforce.soap.partner.SaveResult;
  * @author miguel.oliva
  */
 public class BusinessLogicTestAssignDummyAccountIT extends AbstractTemplateTestCase {
-	private static final String ACCOUNT_ID_IN_B = "001n0000003gwUyAAI";
+	private static final String ACCOUNT_ID_IN_B = "0012000001AHHlvAAH";
 	private BatchTestHelper helper;
 
 	private List<Map<String, Object>> createdContactsInA = new ArrayList<Map<String, Object>>();
@@ -108,9 +108,6 @@ public class BusinessLogicTestAssignDummyAccountIT extends AbstractTemplateTestC
 		SubflowInterceptingChainLifecycleWrapper flow = getSubFlow("createAccountFlow");
 		flow.initialise();
 		createdAccountsInA.add(anAccount().with("Name", buildUniqueName(TEMPLATE_NAME, "AccountTest-"))
-											.with("BillingCity", "San Francisco")
-											.with("BillingCountry", "USA")
-											.with("Phone", "123456789")
 											.with("Industry", "Education")
 											.with("NumberOfEmployees", 9000)
 											.build());

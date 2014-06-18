@@ -15,7 +15,8 @@ Here you should not:
        	<poll doc:name="fireup Contact synchronization" >
           	<fixed-frequency-scheduler frequency="${polling.frequency}" startDelay="${polling.startDelayMillis}"/>
           	<watermark variable="lastQueryDate" default-expression="${watermark.default.expression}" selector="MAX" selector-expression="#[payload.LastModifiedDate]"/>
-           	<sfdc:query config-ref="SalesforceA"  doc:name="query Contacts with filtering criteria from Salesforce Instance A" query="SELECT Email, FirstName, LastName, Id, LastModifiedDate, MailingCity, MailingState, MailingCountry, MailingPostalCode, Title, Account.Id, Account.Name, Account.AccountNumber, Account.AccountSource, Account.AnnualRevenue, Account.BillingCity, Account.BillingCountry, Account.BillingPostalCode, Account.BillingState, Account.BillingStreet, Account.Description, Account.Fax, Account.Industry, Account.NumberOfEmployees, Account.Ownership, Account.ParentId, Account.Phone, Account.Rating, Account.RecordTypeId, Account.ShippingCity, Account.ShippingCountry, Account.ShippingPostalCode, Account.ShippingState, Account.ShippingStreet, Account.Sic, Account.SicDesc, Account.Site, Account.TickerSymbol, Account.Type, Account.Website FROM Contact WHERE LastModifiedDate &gt; #[flowVars['lastQueryDate']] AND Email != null AND MailingCountry IN ('U.S.','United States','US')">
+           	<sfdc:query config-ref="SalesforceA"  doc:name="query Contacts with filtering criteria from Salesforce Instance A" query="SELECT Account.Id, Account.Name, Account.Description, Account.Industry, Account.NumberOfEmployees, Email,FirstName, LastModifiedDate, LastName, MailingCountry, Title
+ FROM Contact WHERE LastModifiedDate &gt; #[flowVars['lastQueryDate']] AND Email != null AND MailingCountry IN ('U.S.','United States','US')">
           	</sfdc:query>
       	</poll>
         <batch:execute name="businessLogicBatch" doc:name="Batch Execute"/>

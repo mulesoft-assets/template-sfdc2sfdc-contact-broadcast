@@ -107,9 +107,6 @@ public class BusinessLogicTestCreateAccountIT extends AbstractTemplateTestCase {
 		SubflowInterceptingChainLifecycleWrapper flow = getSubFlow("createAccountFlow");
 		flow.initialise();
 		createdAccountsInA.add(anAccount().with("Name", buildUniqueName(TEMPLATE_NAME, "AccountTest-"))
-											.with("BillingCity", "San Francisco")
-											.with("BillingCountry", "USA")
-											.with("Phone", "123456789")
 											.with("Industry", "Education")
 											.with("NumberOfEmployees", 9000)
 											.build());

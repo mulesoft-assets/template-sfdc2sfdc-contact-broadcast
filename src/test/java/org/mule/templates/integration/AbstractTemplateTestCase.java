@@ -123,13 +123,7 @@ public class AbstractTemplateTestCase extends FunctionalTestCase {
 								.with("FirstName", "FirstName_" + sequence)
 								.with("LastName", buildUniqueName(TEMPLATE_NAME, "LastName_" + sequence + "_"))
 								.with("Email", buildUniqueEmail("some.email." + sequence))
-								.with("Description", "Some fake description")
-								.with("MailingCity", "Denver")
 								.with("MailingCountry", "US")
-								.with("MobilePhone", "123456789")
-								.with("Department", "department_" + sequence + "_" + orgId)
-								.with("Phone", "123456789")
-								.with("Title", "Dr")
 								.build();
 	}
 
