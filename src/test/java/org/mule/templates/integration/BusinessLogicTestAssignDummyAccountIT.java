@@ -29,7 +29,7 @@ import com.sforce.soap.partner.SaveResult;
  * @author miguel.oliva
  */
 public class BusinessLogicTestAssignDummyAccountIT extends AbstractTemplateTestCase {
-	private static final String ACCOUNT_ID_IN_B = "0012000001AHHlvAAH";
+	private static final String ACCOUNT_ID_IN_B = "0012000001AHHm1AAH";
 	private BatchTestHelper helper;
 
 	private List<Map<String, Object>> createdContactsInA = new ArrayList<Map<String, Object>>();
