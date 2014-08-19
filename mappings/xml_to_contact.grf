@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><Graph __version="3.5.0" author="Admin" created="Tue Aug 19 09:12:25 CEST 2014" description="XML To Contact" guiVersion="3.4.4.P" id="1408452526848" licenseCode="Unlicensed" licenseType="Unknown" modified="Tue Aug 19 09:12:25 CEST 2014" modifiedBy="Admin" name="XML_To_Contact" preview-file="${Project_Home}/src/main/resources/ContactExample.xml" revision="1.0" showComponentDetails="false">
+<Global>
+<Metadata __index="0" __referenceCounter="1" __sourcePath="{}/Contact" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _type="Output" id="5cd49e00-e3a7-48d3-9b4f-76dd75970042">
+<Record fieldDelimiter="," name="Contact" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __implementationClass="java.lang.String" __index="2" __sourcePath="{}/Contact/AccountId" containerType="SINGLE" label="AccountId" name="AccountId" type="string"/>
+<Field __implementationClass="java.lang.String" __index="32" __sourcePath="{}/Contact/AssistantName" containerType="SINGLE" label="AssistantName" name="AssistantName" type="string"/>
+<Field __implementationClass="java.lang.String" __index="28" __sourcePath="{}/Contact/AssistantPhone" containerType="SINGLE" label="AssistantPhone" name="AssistantPhone" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="17" __sourcePath="{}/Contact/Birthdate" containerType="SINGLE" label="Birthdate" name="Birthdate" type="string"/>
+<Field __index="20" __sourcePath="{}/Contact/CleanStatus" containerType="SINGLE" label="CleanStatus" name="CleanStatus" type="string"/>
+<Field __implementationClass="java.lang.String" __index="8" __sourcePath="{}/Contact/CreatedById" containerType="SINGLE" label="CreatedById" name="CreatedById" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="22" __sourcePath="{}/Contact/CreatedDate" containerType="SINGLE" label="CreatedDate" name="CreatedDate" type="string"/>
+<Field __implementationClass="java.lang.String" __index="6" __sourcePath="{}/Contact/Department" containerType="SINGLE" label="Department" name="Department" type="string"/>
+<Field __implementationClass="java.lang.String" __index="31" __sourcePath="{}/Contact/Description" containerType="SINGLE" label="Description" name="Description" type="string"/>
+<Field __implementationClass="java.lang.String" __index="3" __sourcePath="{}/Contact/Email" containerType="SINGLE" label="Email" name="Email" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="29" __sourcePath="{}/Contact/EmailBouncedDate" containerType="SINGLE" label="EmailBouncedDate" name="EmailBouncedDate" type="string"/>
+<Field __implementationClass="java.lang.String" __index="45" __sourcePath="{}/Contact/EmailBouncedReason" containerType="SINGLE" label="EmailBouncedReason" name="EmailBouncedReason" type="string"/>
+<Field __implementationClass="java.lang.String" __index="55" __sourcePath="{}/Contact/Fax" containerType="SINGLE" label="Fax" name="Fax" type="string"/>
+<Field __implementationClass="java.lang.String" __index="46" __sourcePath="{}/Contact/FirstName" containerType="SINGLE" label="FirstName" name="FirstName" type="string"/>
+<Field __implementationClass="java.lang.String" __index="52" __sourcePath="{}/Contact/HomePhone" containerType="SINGLE" label="HomePhone" name="HomePhone" type="string"/>
+<Field __implementationClass="java.lang.String" __index="24" __sourcePath="{}/Contact/Id" containerType="SINGLE" label="Id" name="Id" type="string"/>
+<Field __implementationClass="java.lang.Boolean" __index="13" __sourcePath="{}/Contact/IsDeleted" containerType="SINGLE" label="IsDeleted" name="IsDeleted" type="boolean"/>
+<Field __implementationClass="java.lang.Boolean" __index="14" __sourcePath="{}/Contact/IsEmailBounced" containerType="SINGLE" label="IsEmailBounced" name="IsEmailBounced" type="boolean"/>
+<Field __implementationClass="java.lang.String" __index="27" __sourcePath="{}/Contact/Jigsaw" containerType="SINGLE" label="Jigsaw" name="Jigsaw" type="string"/>
+<Field __implementationClass="java.lang.String" __index="57" __sourcePath="{}/Contact/JigsawContactId" containerType="SINGLE" label="JigsawContactId" name="JigsawContactId" type="string"/>
+<Field __implementationClass="java.lang.String" __index="1" __sourcePath="{}/Contact/Languages_x005f_x005fc" containerType="SINGLE" label="Languages__c" name="Languages__c" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="54" __sourcePath="{}/Contact/LastActivityDate" containerType="SINGLE" label="LastActivityDate" name="LastActivityDate" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="50" __sourcePath="{}/Contact/LastCURequestDate" containerType="SINGLE" label="LastCURequestDate" name="LastCURequestDate" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="44" __sourcePath="{}/Contact/LastCUUpdateDate" containerType="SINGLE" label="LastCUUpdateDate" name="LastCUUpdateDate" type="string"/>
+<Field __implementationClass="java.lang.String" __index="56" __sourcePath="{}/Contact/LastModifiedById" containerType="SINGLE" label="LastModifiedById" name="LastModifiedById" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="0" __sourcePath="{}/Contact/LastModifiedDate" containerType="SINGLE" label="LastModifiedDate" name="LastModifiedDate" type="string"/>
+<Field __implementationClass="java.lang.String" __index="25" __sourcePath="{}/Contact/LastName" containerType="SINGLE" label="LastName" name="LastName" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="34" __sourcePath="{}/Contact/LastReferencedDate" containerType="SINGLE" label="LastReferencedDate" name="LastReferencedDate" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="15" __sourcePath="{}/Contact/LastViewedDate" containerType="SINGLE" label="LastViewedDate" name="LastViewedDate" type="string"/>
+<Field __index="21" __sourcePath="{}/Contact/LeadSource" containerType="SINGLE" label="LeadSource" name="LeadSource" type="string"/>
+<Field __index="38" __sourcePath="{}/Contact/Level_x005f_x005fc" containerType="SINGLE" label="Level__c" name="Level__c" type="string"/>
+<Field __implementationClass="java.lang.String" __index="49" __sourcePath="{}/Contact/MailingAddress" containerType="SINGLE" label="MailingAddress" name="MailingAddress" type="string"/>
+<Field __implementationClass="java.lang.String" __index="16" __sourcePath="{}/Contact/MailingCity" containerType="SINGLE" label="MailingCity" name="MailingCity" type="string"/>
+<Field __implementationClass="java.lang.String" __index="33" __sourcePath="{}/Contact/MailingCountry" containerType="SINGLE" label="MailingCountry" name="MailingCountry" type="string"/>
+<Field __implementationClass="java.lang.Double" __index="10" __sourcePath="{}/Contact/MailingLatitude" containerType="SINGLE" label="MailingLatitude" name="MailingLatitude" type="number"/>
+<Field __implementationClass="java.lang.Double" __index="40" __sourcePath="{}/Contact/MailingLongitude" containerType="SINGLE" label="MailingLongitude" name="MailingLongitude" type="number"/>
+<Field __implementationClass="java.lang.String" __index="42" __sourcePath="{}/Contact/MailingPostalCode" containerType="SINGLE" label="MailingPostalCode" name="MailingPostalCode" type="string"/>
+<Field __implementationClass="java.lang.String" __index="37" __sourcePath="{}/Contact/MailingState" containerType="SINGLE" label="MailingState" name="MailingState" type="string"/>
+<Field __implementationClass="java.lang.String" __index="26" __sourcePath="{}/Contact/MailingStreet" containerType="SINGLE" label="MailingStreet" name="MailingStreet" type="string"/>
+<Field __implementationClass="java.lang.String" __index="12" __sourcePath="{}/Contact/MasterRecordId" containerType="SINGLE" label="MasterRecordId" name="MasterRecordId" type="string"/>
+<Field __implementationClass="java.lang.String" __index="4" __sourcePath="{}/Contact/MobilePhone" containerType="SINGLE" label="MobilePhone" name="MobilePhone" type="string"/>
+<Field __implementationClass="java.lang.String" __index="5" __sourcePath="{}/Contact/Name" containerType="SINGLE" label="Name" name="Name" type="string"/>
+<Field __implementationClass="java.lang.String" __index="23" __sourcePath="{}/Contact/OtherAddress" containerType="SINGLE" label="OtherAddress" name="OtherAddress" type="string"/>
+<Field __implementationClass="java.lang.String" __index="9" __sourcePath="{}/Contact/OtherCity" containerType="SINGLE" label="OtherCity" name="OtherCity" type="string"/>
+<Field __implementationClass="java.lang.String" __index="43" __sourcePath="{}/Contact/OtherCountry" containerType="SINGLE" label="OtherCountry" name="OtherCountry" type="string"/>
+<Field __implementationClass="java.lang.Double" __index="19" __sourcePath="{}/Contact/OtherLatitude" containerType="SINGLE" label="OtherLatitude" name="OtherLatitude" type="number"/>
+<Field __implementationClass="java.lang.Double" __index="7" __sourcePath="{}/Contact/OtherLongitude" containerType="SINGLE" label="OtherLongitude" name="OtherLongitude" type="number"/>
+<Field __implementationClass="java.lang.String" __index="30" __sourcePath="{}/Contact/OtherPhone" containerType="SINGLE" label="OtherPhone" name="OtherPhone" type="string"/>
+<Field __implementationClass="java.lang.String" __index="47" __sourcePath="{}/Contact/OtherPostalCode" containerType="SINGLE" label="OtherPostalCode" name="OtherPostalCode" type="string"/>
+<Field __implementationClass="java.lang.String" __index="36" __sourcePath="{}/Contact/OtherState" containerType="SINGLE" label="OtherState" name="OtherState" type="string"/>
+<Field __implementationClass="java.lang.String" __index="18" __sourcePath="{}/Contact/OtherStreet" containerType="SINGLE" label="OtherStreet" name="OtherStreet" type="string"/>
+<Field __implementationClass="java.lang.String" __index="39" __sourcePath="{}/Contact/OwnerId" containerType="SINGLE" label="OwnerId" name="OwnerId" type="string"/>
+<Field __implementationClass="java.lang.String" __index="41" __sourcePath="{}/Contact/Phone" containerType="SINGLE" label="Phone" name="Phone" type="string"/>
+<Field __implementationClass="java.lang.String" __index="11" __sourcePath="{}/Contact/PhotoUrl" containerType="SINGLE" label="PhotoUrl" name="PhotoUrl" type="string"/>
+<Field __implementationClass="java.lang.String" __index="53" __sourcePath="{}/Contact/ReportsToId" containerType="SINGLE" label="ReportsToId" name="ReportsToId" type="string"/>
+<Field __index="35" __sourcePath="{}/Contact/Salutation" containerType="SINGLE" label="Salutation" name="Salutation" type="string"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="51" __sourcePath="{}/Contact/SystemModstamp" containerType="SINGLE" label="SystemModstamp" name="SystemModstamp" type="string"/>
+<Field __implementationClass="java.lang.String" __index="48" __sourcePath="{}/Contact/Title" containerType="SINGLE" label="Title" name="Title" type="string"/>
+</Record>
+</Metadata>
+<Metadata __filteredMetadata="false" __index="0" __referenceCounter="1" __schemaType="{http://schemas.xmlsoap.org/soap/envelope/}EnvelopeType" __sourcePath="{http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope" _dataStructure="OBJECT" _id="__id" _type="Input" id="4791f7f1-af68-4dbd-b9e9-39aa7d574233">
+<Record fieldDelimiter="," name="Envelope" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __index="0" __schemaType="{http://soap.sforce.com/2005/09/outbound}notificationsType" __sourcePath="{http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:OrganizationId" containerType="SINGLE" label="OrganizationId" name="OrganizationId" type="string"/>
+<Field __index="1" __schemaType="{http://soap.sforce.com/2005/09/outbound}notificationsType" __sourcePath="{http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:ActionId" containerType="SINGLE" label="ActionId" name="ActionId" type="string"/>
+<Field __index="2" __schemaType="{http://soap.sforce.com/2005/09/outbound}notificationsType" __sourcePath="{http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:SessionId" containerType="SINGLE" label="SessionId" name="SessionId" type="string"/>
+<Field __index="3" __schemaType="{http://soap.sforce.com/2005/09/outbound}notificationsType" __sourcePath="{http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:EnterpriseUrl" containerType="SINGLE" label="EnterpriseUrl" name="EnterpriseUrl" type="string"/>
+<Field __index="4" __schemaType="{http://soap.sforce.com/2005/09/outbound}notificationsType" __sourcePath="{http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:PartnerUrl" containerType="SINGLE" label="PartnerUrl" name="PartnerUrl" type="string"/>
+<Field __index="5" __schemaType="{http://soap.sforce.com/2005/09/outbound}NotificationType" __sourcePath="{http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:Notification/ns1:Id" containerType="SINGLE" label="Id" name="Id" type="string"/>
+<Field __index="6" __schemaType="{http://soap.sforce.com/2005/09/outbound}sObjectType" __sourcePath="{urn:sobject.enterprise.soap.sforce.com=ns2,http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:Id" containerType="SINGLE" label="Id" name="Id_1" type="string"/>
+<Field __index="7" __schemaType="{http://soap.sforce.com/2005/09/outbound}sObjectType" __sourcePath="{urn:sobject.enterprise.soap.sforce.com=ns2,http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:AccountId" containerType="SINGLE" label="AccountId" name="AccountId" type="string"/>
+<Field __index="8" __schemaType="{http://soap.sforce.com/2005/09/outbound}sObjectType" __sourcePath="{urn:sobject.enterprise.soap.sforce.com=ns2,http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:Description" containerType="SINGLE" label="Description" name="Description" type="string"/>
+<Field __index="9" __schemaType="{http://soap.sforce.com/2005/09/outbound}sObjectType" __sourcePath="{urn:sobject.enterprise.soap.sforce.com=ns2,http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:FirstName" containerType="SINGLE" label="FirstName" name="FirstName" type="string"/>
+<Field __index="10" __schemaType="{http://soap.sforce.com/2005/09/outbound}sObjectType" __sourcePath="{urn:sobject.enterprise.soap.sforce.com=ns2,http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:Email" containerType="SINGLE" label="Email" name="Email" type="string"/>
+<Field __dmType="Calendar" __index="11" __schemaType="{http://soap.sforce.com/2005/09/outbound}sObjectType" __sourcePath="{urn:sobject.enterprise.soap.sforce.com=ns2,http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:LastModifiedDate" containerType="SINGLE" label="LastModifiedDate" name="LastModifiedDate" type="string"/>
+<Field __index="12" __schemaType="{http://soap.sforce.com/2005/09/outbound}sObjectType" __sourcePath="{urn:sobject.enterprise.soap.sforce.com=ns2,http://soap.sforce.com/2005/09/outbound=ns1,http://schemas.xmlsoap.org/soap/envelope/=ns0}/ns0:Envelope/ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:LastName" containerType="SINGLE" label="LastName" name="LastName" type="string"/>
+</Record>
+</Metadata>
+<Dictionary>
+<Entry id="DictionaryEntry0" input="true" name="inputPayload" output="false" type="object"/>
+<Entry id="DictionaryEntry1" input="false" name="outputPayload" output="true" type="object"/>
+</Dictionary>
+</Global>
+<Phase number="0">
+<Node enabled="enabled" guiName="Foreach 'ns0:Envelope' -&gt; 'Contact'" guiX="460" guiY="20" id="FOREACH_NS0_ENVELOPE_CONTACT" transformClass="com.mulesoft.datamapper.transform.MelRecordTransform" type="REFORMAT">
+<attr name="melScript"><![CDATA[//MEL
+//START -> DO NOT REMOVE
+output.__id = input.__id;
+//END -> DO NOT REMOVE
+output.Id = input.Id;
+output.AccountId = input.AccountId;
+output.Description = input.Description;
+output.FirstName = input.FirstName;
+output.Email = input.Email;
+output.LastModifiedDate = input.LastModifiedDate;
+output.LastName = input.LastName;
+]]></attr>
+</Node>
+<Node cacheInMemory="true" enabled="enabled" fileURL="dict:outputPayload" guiName="Map&lt;k,v&gt; WRITER" guiX="900" guiY="20" id="MAP_WRITER0" type="MAP_WRITER">
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<clover:collection clover:name="Contact" xmlns:clover="http://www.cloveretl.com/ns/xmlmapping">
+  <item clover:inPort="0">
+    <LastModifiedDate clover:dataType="java.util.Calendar">$0.LastModifiedDate</LastModifiedDate>
+    <clover:element clover:name="Languages__c" clover:dataType="java.lang.String">$0.Languages__c</clover:element>
+    <AccountId clover:dataType="java.lang.String">$0.AccountId</AccountId>
+    <Email clover:dataType="java.lang.String">$0.Email</Email>
+    <MobilePhone clover:dataType="java.lang.String">$0.MobilePhone</MobilePhone>
+    <Name clover:dataType="java.lang.String">$0.Name</Name>
+    <Department clover:dataType="java.lang.String">$0.Department</Department>
+    <OtherLongitude clover:dataType="java.lang.Double">$0.OtherLongitude</OtherLongitude>
+    <CreatedById clover:dataType="java.lang.String">$0.CreatedById</CreatedById>
+    <OtherCity clover:dataType="java.lang.String">$0.OtherCity</OtherCity>
+    <MailingLatitude clover:dataType="java.lang.Double">$0.MailingLatitude</MailingLatitude>
+    <PhotoUrl clover:dataType="java.lang.String">$0.PhotoUrl</PhotoUrl>
+    <MasterRecordId clover:dataType="java.lang.String">$0.MasterRecordId</MasterRecordId>
+    <IsDeleted clover:dataType="java.lang.Boolean">$0.IsDeleted</IsDeleted>
+    <IsEmailBounced clover:dataType="java.lang.Boolean">$0.IsEmailBounced</IsEmailBounced>
+    <LastViewedDate clover:dataType="java.util.Calendar">$0.LastViewedDate</LastViewedDate>
+    <MailingCity clover:dataType="java.lang.String">$0.MailingCity</MailingCity>
+    <Birthdate clover:dataType="java.util.Calendar">$0.Birthdate</Birthdate>
+    <OtherStreet clover:dataType="java.lang.String">$0.OtherStreet</OtherStreet>
+    <OtherLatitude clover:dataType="java.lang.Double">$0.OtherLatitude</OtherLatitude>
+    <CleanStatus>$0.CleanStatus</CleanStatus>
+    <LeadSource>$0.LeadSource</LeadSource>
+    <CreatedDate clover:dataType="java.util.Calendar">$0.CreatedDate</CreatedDate>
+    <OtherAddress clover:dataType="java.lang.String">$0.OtherAddress</OtherAddress>
+    <Id clover:dataType="java.lang.String">$0.Id</Id>
+    <LastName clover:dataType="java.lang.String">$0.LastName</LastName>
+    <MailingStreet clover:dataType="java.lang.String">$0.MailingStreet</MailingStreet>
+    <Jigsaw clover:dataType="java.lang.String">$0.Jigsaw</Jigsaw>
+    <AssistantPhone clover:dataType="java.lang.String">$0.AssistantPhone</AssistantPhone>
+    <EmailBouncedDate clover:dataType="java.util.Calendar">$0.EmailBouncedDate</EmailBouncedDate>
+    <OtherPhone clover:dataType="java.lang.String">$0.OtherPhone</OtherPhone>
+    <Description clover:dataType="java.lang.String">$0.Description</Description>
+    <AssistantName clover:dataType="java.lang.String">$0.AssistantName</AssistantName>
+    <MailingCountry clover:dataType="java.lang.String">$0.MailingCountry</MailingCountry>
+    <LastReferencedDate clover:dataType="java.util.Calendar">$0.LastReferencedDate</LastReferencedDate>
+    <Salutation>$0.Salutation</Salutation>
+    <OtherState clover:dataType="java.lang.String">$0.OtherState</OtherState>
+    <MailingState clover:dataType="java.lang.String">$0.MailingState</MailingState>
+    <clover:element clover:name="Level__c">$0.Level__c</clover:element>
+    <OwnerId clover:dataType="java.lang.String">$0.OwnerId</OwnerId>
+    <MailingLongitude clover:dataType="java.lang.Double">$0.MailingLongitude</MailingLongitude>
+    <Phone clover:dataType="java.lang.String">$0.Phone</Phone>
+    <MailingPostalCode clover:dataType="java.lang.String">$0.MailingPostalCode</MailingPostalCode>
+    <OtherCountry clover:dataType="java.lang.String">$0.OtherCountry</OtherCountry>
+    <LastCUUpdateDate clover:dataType="java.util.Calendar">$0.LastCUUpdateDate</LastCUUpdateDate>
+    <EmailBouncedReason clover:dataType="java.lang.String">$0.EmailBouncedReason</EmailBouncedReason>
+    <FirstName clover:dataType="java.lang.String">$0.FirstName</FirstName>
+    <OtherPostalCode clover:dataType="java.lang.String">$0.OtherPostalCode</OtherPostalCode>
+    <Title clover:dataType="java.lang.String">$0.Title</Title>
+    <MailingAddress clover:dataType="java.lang.String">$0.MailingAddress</MailingAddress>
+    <LastCURequestDate clover:dataType="java.util.Calendar">$0.LastCURequestDate</LastCURequestDate>
+    <SystemModstamp clover:dataType="java.util.Calendar">$0.SystemModstamp</SystemModstamp>
+    <HomePhone clover:dataType="java.lang.String">$0.HomePhone</HomePhone>
+    <ReportsToId clover:dataType="java.lang.String">$0.ReportsToId</ReportsToId>
+    <LastActivityDate clover:dataType="java.util.Calendar">$0.LastActivityDate</LastActivityDate>
+    <Fax clover:dataType="java.lang.String">$0.Fax</Fax>
+    <LastModifiedById clover:dataType="java.lang.String">$0.LastModifiedById</LastModifiedById>
+    <JigsawContactId clover:dataType="java.lang.String">$0.JigsawContactId</JigsawContactId>
+  </item>
+</clover:collection>]]></attr>
+<attr name="__typeName"><![CDATA[Contact]]></attr>
+<attr name="_data_format"><![CDATA[MAP]]></attr>
+<attr name="__connectorName"><![CDATA[SalesforceB]]></attr>
+</Node>
+<Node charset="UTF-8" enabled="enabled" fileURL="dict:inputPayload" guiName="XML READER" guiX="20" guiY="20" id="XML_READER0" type="XML_READER">
+<attr name="xmlSchemaURL"><![CDATA[./src/test/resources/notifications.xsd,C:/Users/Admin/Documents/Projects/Mule/template-sfdc2sfdc-contact-broadcast/src/test/resources/FirstName.xsd,C:/Users/Admin/Documents/Projects/Mule/template-sfdc2sfdc-contact-broadcast/src/test/resources/Envelope.xsd]]></attr>
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Context namespacePaths="ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" outPort="0" sequenceField="__id" xpath="/ns0:Envelope">
+  <Mapping cloverField="OrganizationId" namespacePaths="ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:OrganizationId"/>
+  <Mapping cloverField="ActionId" namespacePaths="ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:ActionId"/>
+  <Mapping cloverField="SessionId" namespacePaths="ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:SessionId"/>
+  <Mapping cloverField="EnterpriseUrl" namespacePaths="ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:EnterpriseUrl"/>
+  <Mapping cloverField="PartnerUrl" namespacePaths="ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:PartnerUrl"/>
+  <Mapping cloverField="Id" namespacePaths="ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:Notification/ns1:Id"/>
+  <Mapping cloverField="Id_1" namespacePaths="ns2=&quot;urn:sobject.enterprise.soap.sforce.com&quot;;ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:Id"/>
+  <Mapping cloverField="AccountId" namespacePaths="ns2=&quot;urn:sobject.enterprise.soap.sforce.com&quot;;ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:AccountId"/>
+  <Mapping cloverField="Description" namespacePaths="ns2=&quot;urn:sobject.enterprise.soap.sforce.com&quot;;ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:Description"/>
+  <Mapping cloverField="FirstName" namespacePaths="ns2=&quot;urn:sobject.enterprise.soap.sforce.com&quot;;ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:FirstName"/>
+  <Mapping cloverField="Email" namespacePaths="ns2=&quot;urn:sobject.enterprise.soap.sforce.com&quot;;ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:Email"/>
+  <Mapping cloverField="LastModifiedDate" namespacePaths="ns2=&quot;urn:sobject.enterprise.soap.sforce.com&quot;;ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:LastModifiedDate"/>
+  <Mapping cloverField="LastName" namespacePaths="ns2=&quot;urn:sobject.enterprise.soap.sforce.com&quot;;ns1=&quot;http://soap.sforce.com/2005/09/outbound&quot;;ns0=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;" trim="true" xpath="ns0:Body/ns1:notifications/ns1:Notification/ns1:sObject/ns2:LastName"/>
+</Context>
+]]></attr>
+<attr name="_data_format"><![CDATA[XML]]></attr>
+<attr name="__rootGlobalElementName"><![CDATA[{http://schemas.xmlsoap.org/soap/envelope/}Envelope]]></attr>
+</Node>
+<Edge debugMode="true" fromNode="FOREACH_NS0_ENVELOPE_CONTACT:0" guiBendpoints="" id="Edge1" inPort="Port 0 (in)" metadata="5cd49e00-e3a7-48d3-9b4f-76dd75970042" outPort="Port 0 (out)" toNode="MAP_WRITER0:0"/>
+<Edge debugMode="true" fromNode="XML_READER0:0" guiBendpoints="" id="Edge0" inPort="Port 0 (in)" metadata="4791f7f1-af68-4dbd-b9e9-39aa7d574233" outPort="Port 0 (out)" toNode="FOREACH_NS0_ENVELOPE_CONTACT:0"/>
+</Phase>
+</Graph>

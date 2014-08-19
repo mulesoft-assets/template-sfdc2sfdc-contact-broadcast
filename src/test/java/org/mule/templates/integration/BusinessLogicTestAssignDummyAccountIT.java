@@ -45,12 +45,14 @@ public class BusinessLogicTestAssignDummyAccountIT extends AbstractTemplateTestC
 	public static void beforeClass() {
 		System.setProperty("account.sync.policy", "assignDummyAccount");
 		System.setProperty("account.id.in.b", ACCOUNT_ID_IN_B);
+		System.setProperty("trigger.policy", "poll");	
 	}
 
 	@AfterClass
 	public static void shutDown() {
 		System.clearProperty("account.sync.policy");
 		System.clearProperty("account.id.in.b");
+		System.clearProperty("trigger.policy");
 	}
 
 	@Before
@@ -122,9 +124,7 @@ public class BusinessLogicTestAssignDummyAccountIT extends AbstractTemplateTestC
 		List<SaveResult> results = (List<SaveResult>) event.getMessage()
 															.getPayload();
 		for (int i = 0; i < results.size(); i++) {
-			createdAccountsInA.get(i)
-								.put("Id", results.get(i)
-													.getId());
+			createdAccountsInA.get(i).put("Id", results.get(i).getId());
 		}
 
 		System.out.println("Results of data creation in sandbox" + createdAccountsInA.toString());
