@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+<mule xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
-http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd">
+    <data-mapper:config name="JSON_To_Contact" transformationGraphPath="json_to_contact.grf" doc:name="JSON_To_Contact"/>
+    <flow name="outboundMessaging" doc:name="outboundMessaging">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="migrate-contacts" doc:name="HTTP"/>
+        <set-payload value="[{&quot;attributes&quot;:{&quot;type&quot;:&quot;Contact&quot;},&quot;IsEmailBounced&quot;:false,&quot;HasOptedOutOfFax&quot;:false,&quot;OwnerId&quot;:&quot;00520000003LtYCAA0&quot;,&quot;Account&quot;:{&quot;attributes&quot;:{&quot;type&quot;:&quot;Account&quot;,&quot;url&quot;:&quot;/services/data/v31.0/sobjects/Account/0012000001AOHpxAAH&quot;},&quot;Name&quot;:&quot;GenePoint&quot;,&quot;Id&quot;:&quot;0012000001AOHpxAAH&quot;,&quot;Industry&quot;:&quot;Biotechnology&quot;},&quot;HasOptedOutOfEmail&quot;:false,&quot;LastName&quot;:&quot;tabek&quot;,&quot;Title&quot;:&quot;BBB&quot;,&quot;DoNotCall&quot;:false,&quot;AccountId&quot;:&quot;0012000001AOHpxAAH&quot;,&quot;Email&quot;:&quot;j@t.com&quot;,&quot;SystemModstamp&quot;:&quot;2014-09-17T09:13:55.000+0000&quot;,&quot;CleanStatus&quot;:&quot;Pending&quot;,&quot;AccountName&quot;:&quot;GenePoint&quot;,&quot;IsDeleted&quot;:false,&quot;FirstName&quot;:&quot;Josh&quot;}]" doc:name="Set Payload"/>
+        <data-mapper:transform config-ref="JSON_To_Contact" doc:name="JSON To Contact"/>
+        <logger message="11111111111111 #[payload]" level="INFO" doc:name="Logger"/>
+        <batch:execute name="businessLogicBatch" doc:name="Batch Execute"/>
+        <set-payload value="ok" doc:name="Set Payload"/>
+        <http:response-builder status="200" contentType="text/html" doc:name="HTTP Response Builder"/>
+    </flow>
     
         <flow name="triggerFlow" doc:name="triggerFlow" processingStrategy="synchronous" doc:description="This is the simpliest entry point to start the excecution of your Anypoint Template you should: 
 	* Define any inbound endpoint
 	* Handle any input parameter and transform it into the expected format by the mainFlow
 Here you should not: 
 	* Run validations against external systems
-	* Choose flow of your application based on input parameters">
+	* Choose flow of your application based on input parameters" initialState="stopped">
        	<poll doc:name="fireup Contact synchronization" >
           	<fixed-frequency-scheduler frequency="${polling.frequency}" startDelay="${polling.startDelayMillis}"/>
           	<watermark variable="lastQueryDate" default-expression="${watermark.default.expression}" selector="MAX" selector-expression="#[payload.LastModifiedDate]"/>

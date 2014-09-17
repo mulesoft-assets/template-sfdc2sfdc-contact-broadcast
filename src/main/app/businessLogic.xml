@@ -5,7 +5,7 @@ xmlns="http://www.mulesoft.org/schema/mule/core"
 xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
 xmlns:spring="http://www.springframework.org/schema/beans" 
 xmlns:json="http://www.mulesoft.org/schema/mule/json"
-version="EE-3.5.0" 
+version="EE-3.5.1" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
@@ -17,6 +17,7 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
         <batch:threading-profile poolExhaustedAction="WAIT"/>
         <batch:process-records>
             <batch:step name="foreachContactInAGetContactBStep">
+                <logger message="222222222 #[payload]" level="INFO" doc:name="Logger"/>
             	<enricher source="#[payload]" target="#[recordVars['idInB']]" doc:name="store payload in variable idInB">
         			<sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="query Contact from Salesforce Instance B"/>
         		</enricher>
@@ -71,6 +72,7 @@ payload.remove('LastModifiedDate');
            	        <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="upsert Contacts in Org B">
             			<sfdc:objects ref="#[payload]"/>
         			</sfdc:upsert>
+                    <logger message="#[payload]" level="INFO" doc:name="Log result"/>
                 </batch:commit>
             </batch:step>
         </batch:process-records>
