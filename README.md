@@ -84,7 +84,8 @@ column='486'
 
 ### As destination of data
 
-There are no particular considerations for this Anypoint Template regarding Siebel as data destination.
+There are no particular considerations for this Anypoint Template regarding Salesforce as data destination.
+
 
 
 
@@ -144,11 +145,12 @@ Mule Studio provides you with really easy way to deploy your Template directly t
 In order to use this Mule Anypoint Template you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. Detail list with examples:
 ### Application configuration
 **Application configuration**
+
 + http.port `9090` 
 + polling.frequency `60000`
 + poll.startDelayMillis `0`
 + watermark.defaultExpression `YESTERDAY`
-+ account.sync.policy `syncAccount`
++ account.sync.policy `assignDummyAccount`
 + account.id.in.b `001n0000003fMWXAA2`
 
 **Note:** the property **account.sync.policy** can take any of the three following values: 
@@ -158,12 +160,14 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 + **assignDummyAccount**: it will assign the cotact to an pre existing account in Salesforce instance B. For this it will use the value of  `account.id.in.b`. Finding the Id of the desired Account can be done by executing in your **Sales Force Developer Console** the following query: `SELECT Id, Name, Description FROM Account`.
 
 **Salesforce Connector configuration for company A**
+
 + sfdc.a.username `bob.dylan@orga`
 + sfdc.a.password `DylanPassword123`
 + sfdc.a.securityToken `avsfwCUl7apQs56Xq2AKi3X`
 + sfdc.a.url `https://login.salesforce.com/services/Soap/u/26.0`
 
 **Salesforce Connector configuration for company B**
+
 + sfdc.b.username `joan.baez@orgb`
 + sfdc.b.password `JoanBaez456`
 + sfdc.b.securityToken `ces56arl7apQs56XTddf34X`
