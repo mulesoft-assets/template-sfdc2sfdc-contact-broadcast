@@ -60,7 +60,7 @@ Once this all is done every time when you will make a change on Account in sourc
 
 + trigger.policy `poll`
 
-**Note:** the property **account.sync.policy** can take any of the three following values: 
+**Note:** the property **account.sync.policy** can take any of the two following values: 
 
 + **empty_value**: if the propety has no value assigned to it then application will do nothing in what respect to the account and it'll just move the contact over.
 + **syncAccount**: it will try to create the contact's account should this is not pressent in the Salesforce instance B.
