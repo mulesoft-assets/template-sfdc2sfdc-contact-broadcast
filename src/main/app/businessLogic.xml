@@ -55,9 +55,7 @@ payload['Account'].put('NumberOfEmployees', payload['Account']['NumberOfEmployee
                     </otherwise>
                 </choice>
             </batch:step>
-            <batch:step name="setDummyAccountIdStep" accept-expression="'assignDummyAccount' == '${account.sync.policy}'">
-                <expression-component doc:name="set Account ID"><![CDATA[payload.put('AccountId', '${account.id.in.b}');]]></expression-component>
-            </batch:step>
+
             <batch:step name="foreachContactInAUpsertContactInBStep"> 
             	<expression-component doc:name="set Id for upsert"><![CDATA[payload.remove('Id');
 if (recordVars['idInB'] instanceof NullPayload) {

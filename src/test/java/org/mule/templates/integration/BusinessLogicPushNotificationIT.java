@@ -37,7 +37,6 @@ public class BusinessLogicPushNotificationIT extends AbstractTemplateTestCase {
 	
 	private static final int TIMEOUT_MILLIS = 60;
 	private static final String USER_EMAIL = "sfdc2sfdcuserbroad@test.com";
-	private static final String ACCOUNT_ID_IN_B = "0012000001AHHm1AAH";
 	private BatchTestHelper helper;
 	private Flow triggerPushFlow;
 	List<Map<String, Object>> createdContactsInB = new ArrayList<Map<String, Object>>();
@@ -45,8 +44,8 @@ public class BusinessLogicPushNotificationIT extends AbstractTemplateTestCase {
 	@BeforeClass
 	public static void beforeClass() {
 		System.setProperty("trigger.policy", "push");
-		System.setProperty("account.sync.policy", "assignDummyAccount");
-		System.setProperty("account.id.in.b", ACCOUNT_ID_IN_B);
+		System.setProperty("account.sync.policy", "");
+		System.setProperty("account.id.in.b", "");
 	}
 
 	@AfterClass
@@ -132,7 +131,6 @@ public class BusinessLogicPushNotificationIT extends AbstractTemplateTestCase {
 		request.append("     <Id>04l2000000KFjMbAAL</Id>");
 		request.append("     <sObject xsi:type=\"sf:Contact\" xmlns:sf=\"urn:sobject.enterprise.soap.sforce.com\">");
 		request.append("       <sf:Id>0032000001GgOe4AAF</sf:Id>");
-		request.append("       <sf:AccountId>0012000001BJaC6AAL</sf:AccountId>");
 		request.append("       <sf:Description>Description</sf:Description>");
 		request.append("       <sf:FirstName>" +firstName+ "</sf:FirstName>");
 		request.append("       <sf:LastName>Lehmann</sf:LastName>");

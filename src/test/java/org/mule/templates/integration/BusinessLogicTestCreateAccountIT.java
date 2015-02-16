@@ -91,9 +91,9 @@ public class BusinessLogicTestCreateAccountIT extends AbstractTemplateTestCase {
 
 		assertEquals("The contact should not have been sync", null, invokeRetrieveFlow(retrieveContactFromBFlow, createdContactsInA.get(1)));
 
+		Thread.sleep(5000);
 		Map<String, Object> contacPayload = invokeRetrieveFlow(retrieveContactFromBFlow, createdContactsInA.get(2));
-		assertEquals("The contact should have been sync", createdContactsInA.get(2)
-																			.get("Email"), contacPayload.get("Email"));
+		assertEquals("The contact should have been sync", createdContactsInA.get(2).get("Email"), contacPayload.get("Email"));
 
 		Map<String, Object> accountPayload = invokeRetrieveFlow(retrieveAccountFlowFromB, createdAccountsInA.get(0));
 		Assert.assertEquals("The contact should belong to a different account ", accountPayload.get("Id"), contacPayload.get("AccountId"));

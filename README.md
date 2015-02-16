@@ -154,19 +154,19 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 + polling.frequency `60000`
 + poll.startDelayMillis `0`
 + watermark.defaultExpression `YESTERDAY`
-+ account.sync.policy `assignDummyAccount`
-+ account.id.in.b `001n0000003fMWXAA2`
++ account.sync.policy `syncAccount`
 
 **Trigger policy(push, poll)**
+
 + trigger.policy `poll`
 
 **Note:** the property **account.sync.policy** can take any of the three following values: 
 
 + **empty_value**: if the propety has no value assigned to it then application will do nothing in what respect to the account and it'll just move the contact over.
 + **syncAccount**: it will try to create the contact's account should this is not pressent in the Salesforce instance B.
-+ **assignDummyAccount**: it will assign the cotact to an pre existing account in Salesforce instance B. For this it will use the value of  `account.id.in.b`. Finding the Id of the desired Account can be done by executing in your **Sales Force Developer Console** the following query: `SELECT Id, Name, Description FROM Account`.
 
 **Note:** the property **trigger.policy** can take any of the three following values:
+
 + **empty_value**: if the propety has no value assigned to it then application will do nothing in what respect to the account and it'll just move the contact over.
 + **poll**: the Polling trigger flow will be used
 + **push**: the Push Notification trigger flow will be used
