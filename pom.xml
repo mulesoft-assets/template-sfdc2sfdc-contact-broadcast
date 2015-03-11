@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mule.templates</groupId>
 		<artifactId>templates-tooling-parent-pom</artifactId>
-		<version>1.0.7</version>
+		<version>1.1.5</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -60,6 +60,12 @@
     <dependency>
             <groupId>com.mulesoft.muleesb.transports</groupId>
             <artifactId>mule-transport-wmq-ee</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-http</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
         </dependency>
