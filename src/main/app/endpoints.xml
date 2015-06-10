@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:weave="http://www.mulesoft.org/schema/mule/ee/weave" xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" 
  xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" 
  version="EE-3.7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/weave http://www.mulesoft.org/schema/mule/ee/weave/current/weave.xsd">
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
 
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration"/>
     <flow name="triggerPushFlow"  initialState="started">
@@ -19,8 +19,8 @@ http://www.mulesoft.org/schema/mule/ee/weave http://www.mulesoft.org/schema/mule
                 <object-to-string-transformer doc:name="Object to String"/>
 
                 <logger message="Message from outbound : #[payload]" level="INFO" doc:name="Log input payload"/>
-                <weave:transform-message doc:name="Map XML Notifications to List">
-                    <weave:set-payload><![CDATA[%weave 0.1
+                <dw:transform-message doc:name="Map XML Notifications to List">
+                    <dw:set-payload><![CDATA[%dw 0.1
 %input payload application/xml
 %output application/java
 ---
@@ -33,8 +33,8 @@ payload.Envelope.Body.notifications.*Notification map
 	Email: $.sObject.Email,
 	LastModifiedDate: $.sObject.LastModifiedDate,
 	LastName: $.sObject.LastName
-}]]></weave:set-payload>
-                </weave:transform-message>
+}]]></dw:set-payload>
+                </dw:transform-message>
 <!--                 <data-mapper:transform config-ref="XML_To_Contact" doc:name="XML To Contact"/> -->
                 <flow-ref name="mainFlow" doc:name="trigger mainFlow"/>
             </when>
