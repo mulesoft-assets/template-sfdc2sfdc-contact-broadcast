@@ -5,7 +5,7 @@ xmlns="http://www.mulesoft.org/schema/mule/core"
 xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
 xmlns:spring="http://www.springframework.org/schema/beans" 
 xmlns:json="http://www.mulesoft.org/schema/mule/json"
-version="EE-3.6.0" 
+version="EE-3.7.0" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
@@ -29,7 +29,7 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
                     <sfdc:query-single config-ref="SalesforceB" query="SELECT Id, Name FROM Account WHERE Name = '#[payload['Account']['Name']]'" doc:name="query Account in  Salesforce Instance B"/>
                 </enricher>
                 <choice doc:name="Choice">
-                    <when expression="#[flowVars['accountInB'] is NullPayload]">
+                    <when expression="#[flowVars['accountInB'] == null]">
                         <enricher doc:name="store result in idOfAccountInB" target="#[recordVars['idOfAccountInB']]">
 	                        <processor-chain doc:name="Processor Chain">
                                 <expression-component doc:name="remove unnecessary fields"><![CDATA[payload['Account'].remove('Id');
@@ -58,7 +58,7 @@ payload['Account'].put('NumberOfEmployees', payload['Account']['NumberOfEmployee
 
             <batch:step name="foreachContactInAUpsertContactInBStep"> 
             	<expression-component doc:name="set Id for upsert"><![CDATA[payload.remove('Id');
-if (recordVars['idInB'] instanceof NullPayload) {
+if (recordVars['idInB'] == null) {
 		         		payload.remove('Id') 
 		      		} else { 
 		        			payload.put('Id',recordVars['idInB'].get('Id'))}]]> 
@@ -81,7 +81,7 @@ payload.remove('LastModifiedById');
 			<logger level="INFO" doc:name="log 'broacast has finished'" message="One Way Sync has finished: #[payload]"/>
         </batch:on-complete>
     </batch:job>
-    <flow name="mainFlow" doc:name="mainFlow">
+    <flow name="mainFlow" >
         <batch:execute name="businessLogicBatch" doc:name="trigger businessLogicBatch"/>
         <exception-strategy ref="defaultChoiceExceptionStrategy" doc:name="Reference Exception Strategy"/>
     </flow>
