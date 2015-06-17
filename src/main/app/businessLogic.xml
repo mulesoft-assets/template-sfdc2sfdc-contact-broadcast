@@ -88,7 +88,7 @@ payload map
 
     </sub-flow>
     <sub-flow name="createNewAccountFlow" >
-        <enricher target="#[payload['AccountId']]" doc:name="store result in 'payload.AccountId'">
+        <enricher target="#[payload['AccountId']]" doc:name="store result in 'payload.AccountId'" source="#[payload.getId()]">
             <processor-chain doc:name="Processor Chain">
                 <dw:transform-message doc:name="Transform Message">
                     <dw:set-payload><![CDATA[%dw 1.0
@@ -97,7 +97,6 @@ payload map
 {
 	AccountNumber: payload.Account.AccountNumber,
 	Description : payload.Account.Description,
-	Id: null,
 	Name: payload.Account.Name,
 	(NumberOfEmployees : payload.Account.NumberOfEmployees as :number) when (payload.Account.NumberOfEmployees != null),
 	Industry: payload.Account.Industry
@@ -107,7 +106,7 @@ payload map
                 <sfdc:create-single config-ref="SalesforceB" type="Account" doc:name="Create Account in Salesforce Instance B">
 
                 </sfdc:create-single>
-                <expression-transformer expression="#[payload.getId()]" doc:name="Get new account id"/>
+
 
             </processor-chain>
         </enricher>
