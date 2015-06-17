@@ -36,9 +36,9 @@ The batch job is divided in Input, Process and On Complete stages.
 During the Input stage the Anypoint Template will go to the Salesforce Org A and query all the existing Contacts that match the filter criteria.
 During the Process stage, each SFDC Contact will be filtered depending on, if it has an existing matching Contact in the SFDC Org B.
 The last step of the Process stage will group the contacts and create/update them in SFDC Org B.
-The integration could be also triggered by http inbound connector defined in the flow that is going to trigger the application and executing the batch job with received message from Salesforce source instance.
+The integration could be also triggered by HTTP inbound connector defined in the flow that is going to trigger the application and executing the batch job with received message from Salesforce source instance.
 Outbound messaging in Salesforce allows you to specify that changes to fields within Salesforce can cause messages with field values to be sent to designated external servers.
-Outbound messaging is part of the workflow rule functionality in Salesforce. Workflow rules watch for specific kinds of field changes and trigger automatic Salesforce actions in this case sending contacts as an outbound message to Mule Http inbound connector,
+Outbound messaging is part of the workflow rule functionality in Salesforce. Workflow rules watch for specific kinds of field changes and trigger automatic Salesforce actions in this case sending contacts as an outbound message to Mule HTTP inbound connector,
 which will then further process this message and creates Contacts in target Salesforce org.
 Finally during the On Complete stage the Anypoint Template will log output statistics data into the console.
 
