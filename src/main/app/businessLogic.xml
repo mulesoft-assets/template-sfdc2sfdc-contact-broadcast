@@ -20,11 +20,13 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
         <batch:threading-profile poolExhaustedAction="WAIT"/>
         <batch:process-records>
             <batch:step name="getContactInBStep">
-                <enricher source="#[payload == null ? null : payload.Id]" target="#[payload.Id]" doc:name="store result in 'payload.Id'">
-                    <sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="Query contact in Salesforce instance B"/>
+                <enricher   doc:name="store result in 'payload.Id' and payload.LastModifiedDateB">
+                    <sfdc:query-single config-ref="SalesforceB" query="SELECT Id, LastModifiedDate FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="Query contact in Salesforce instance B"/>
+                    <enrich source="#[payload == null ? null : payload.Id]" target="#[payload.Id]"/>
+                    <enrich source="#[payload == null ? null : payload.LastModifiedDate]" target="#[payload.LastModifiedDateB]"/>
                 </enricher>
             </batch:step>
-            <batch:step name="findOrCreateAccountInBStep" accept-expression="'syncAccount' == '${account.sync.policy}'">
+            <batch:step name="findOrCreateAccountInBStep" accept-expression="'syncAccount' == '${account.sync.policy}' &amp;&amp; (payload['LastModifiedDateB'] == null || payload['LastModifiedDate'] &gt; payload['LastModifiedDateB'])">
                 <choice doc:name="Choice">
                     <when expression="#[payload['Account'] != null]">
                         <flow-ref name="findOrCreateAccountFlow" doc:name="Trigger findOrCreateAccountFlow"/>
@@ -36,7 +38,7 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
 
             </batch:step>
 
-            <batch:step name="createContactsInBStep" accept-expression="!(payload is NullPayload)">
+            <batch:step name="createContactsInBStep" accept-expression="!(payload is NullPayload) &amp;&amp; (payload['LastModifiedDateB'] == null || payload['LastModifiedDate'] &gt; payload['LastModifiedDateB'])">
 
             	
                 <batch:commit size="200" doc:name="Batch Commit">

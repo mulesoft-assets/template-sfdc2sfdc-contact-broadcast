@@ -36,7 +36,7 @@ import com.mulesoft.module.batch.BatchTestHelper;
 public class BusinessLogicPushNotificationIT extends AbstractTemplateTestCase {
 	
 	private static final int TIMEOUT_MILLIS = 60;
-	private static final String USER_EMAIL = "sfdc2sfdcuserbroad@test.com";
+	private static final String USER_EMAIL = "Contbroad" + System.currentTimeMillis() + "@test.com";
 	private BatchTestHelper helper;
 	private Flow triggerPushFlow;
 	List<Map<String, Object>> createdContactsInB = new ArrayList<Map<String, Object>>();
@@ -45,14 +45,12 @@ public class BusinessLogicPushNotificationIT extends AbstractTemplateTestCase {
 	public static void beforeClass() {
 		System.setProperty("trigger.policy", "push");
 		System.setProperty("account.sync.policy", "");
-		System.setProperty("account.id.in.b", "");
 	}
 
 	@AfterClass
 	public static void shutDown() {
 		System.clearProperty("trigger.policy");
 		System.clearProperty("account.sync.policy");
-		System.clearProperty("account.id.in.b");
 	}
 
 	@Before

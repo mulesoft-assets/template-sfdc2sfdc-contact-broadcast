@@ -34,7 +34,7 @@ Requirements have been set not only to be used as examples, but also to establis
 As implemented, this Anypoint Template leverage the [Batch Module](http://www.mulesoft.org/documentation/display/current/Batch+Processing) and [Outbound messaging](https://www.salesforce.com/us/developer/docs/api/Content/sforce_api_om_outboundmessaging.htm)
 The batch job is divided in Input, Process and On Complete stages.
 During the Input stage the Anypoint Template will go to the Salesforce Org A and query all the existing Contacts that match the filter criteria.
-During the Process stage, each SFDC Contact will be filtered depending on, if it has an existing matching Contact in the SFDC Org B.
+During the Process stage, each SFDC Contact will be filtered depending on, if it has an existing matching Contact in the SFDC Org B and if the last updated date of the contact from SFDC Org A is greater than the one in SFDC Org B(in case that the same contact already exists).
 The last step of the Process stage will group the contacts and create/update them in SFDC Org B.
 The integration could be also triggered by HTTP inbound connector defined in the flow that is going to trigger the application and executing the batch job with received message from Salesforce source instance.
 Outbound messaging in Salesforce allows you to specify that changes to fields within Salesforce can cause messages with field values to be sent to designated external servers.
