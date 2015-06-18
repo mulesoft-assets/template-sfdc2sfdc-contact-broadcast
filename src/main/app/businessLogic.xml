@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" 
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" 
 xmlns="http://www.mulesoft.org/schema/mule/core" 
 xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
 xmlns:spring="http://www.springframework.org/schema/beans" 
 xmlns:json="http://www.mulesoft.org/schema/mule/json"
 version="EE-3.7.0" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
+xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
@@ -17,73 +19,98 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
     
         <batch:threading-profile poolExhaustedAction="WAIT"/>
         <batch:process-records>
-            <batch:step name="foreachContactInAGetContactBStep">
-            	<enricher source="#[payload]" target="#[recordVars['idInB']]" doc:name="store payload in variable idInB">
-        			<sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="query Contact from Salesforce Instance B"/>
-        		</enricher>
-            </batch:step>
-             <batch:step name="findOrCreateAccountInBSetp" accept-expression="'syncAccount' == '${account.sync.policy}'">
-                <choice doc:name="Choice">
-                	<when expression="#[payload['Account'] != null]">
-                <enricher source="#[payload]" target="#[flowVars['accountInB']]" doc:name="store result in accountInB">
-                    <sfdc:query-single config-ref="SalesforceB" query="SELECT Id, Name FROM Account WHERE Name = '#[payload['Account']['Name']]'" doc:name="query Account in  Salesforce Instance B"/>
+            <batch:step name="getContactInBStep">
+                <enricher   doc:name="store result in 'payload.Id' and payload.LastModifiedDateB">
+                    <sfdc:query-single config-ref="SalesforceB" query="SELECT Id, LastModifiedDate FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="Query contact in Salesforce instance B"/>
+                    <enrich source="#[payload == null ? null : payload.Id]" target="#[payload.Id]"/>
+                    <enrich source="#[payload == null ? null : payload.LastModifiedDate]" target="#[payload.LastModifiedDateB]"/>
                 </enricher>
+            </batch:step>
+            <batch:step name="findOrCreateAccountInBStep" accept-expression="'syncAccount' == '${account.sync.policy}' &amp;&amp; (payload['LastModifiedDateB'] == null || payload['LastModifiedDate'] &gt; payload['LastModifiedDateB'])">
                 <choice doc:name="Choice">
-                    <when expression="#[flowVars['accountInB'] == null]">
-                        <enricher doc:name="store result in idOfAccountInB" target="#[recordVars['idOfAccountInB']]">
-	                        <processor-chain doc:name="Processor Chain">
-                                <expression-component doc:name="remove unnecessary fields"><![CDATA[payload['Account'].remove('Id');
-payload['Account'].put('NumberOfEmployees', payload['Account']['NumberOfEmployees'] == null ? 0 :  Integer.parseInt(payload['Account']['NumberOfEmployees']) );]]></expression-component>
-                                <set-payload value="#[ [payload['Account']]]" doc:name="Set Payload"/>
-       		                     <sfdc:create config-ref="SalesforceB" type="Account" doc:name="create Account in Salesforce Instance B">
-       	    	                     <sfdc:objects ref="#[payload]"/>
-       	        	             </sfdc:create>
-                                <expression-transformer expression="#[payload[0].getId()]" doc:name="get new account id"/>
-	                        </processor-chain>
-                        </enricher>
+                    <when expression="#[payload['Account'] != null]">
+                        <flow-ref name="findOrCreateAccountFlow" doc:name="Trigger findOrCreateAccountFlow"/>
                     </when>
                     <otherwise>
-                        <enricher target="#[recordVars['idOfAccountInB']]" doc:name="store result in idOfAccountInB">
-     	                   <expression-transformer expression="#[flowVars['accountInB']['Id']]" doc:name="get new account id"/>
-                        </enricher>
+                        <logger message="There is no Account assigned to this contact. Doing nothing" level="INFO" doc:name="Logger"/>
                     </otherwise>
                 </choice>
-                <expression-component doc:name="set Account ID"><![CDATA[payload.put('AccountId', recordVars['idOfAccountInB']);]]></expression-component>
-                	</when>
-                    <otherwise>
-                        <logger level="INFO" doc:name="Logger" message="There is no Account assigned to this contact. Doing nothing"/>
-                    </otherwise>
-                </choice>
+
             </batch:step>
 
-            <batch:step name="foreachContactInAUpsertContactInBStep"> 
-            	<expression-component doc:name="set Id for upsert"><![CDATA[payload.remove('Id');
-if (recordVars['idInB'] == null) {
-		         		payload.remove('Id') 
-		      		} else { 
-		        			payload.put('Id',recordVars['idInB'].get('Id'))}]]> 
-	  			</expression-component>
-	            <expression-component doc:name="remove LastModifiedDate for upsert"><![CDATA[payload.remove('Account');
-payload.remove('LastModifiedDate');
-payload.remove('LastModifiedById');
-	  			]]></expression-component>
-                <batch:commit size="200" doc:name="Batch Commit" >
-                	<logger message="Contact to update/create: #[payload]" level="INFO" doc:name="log 'Contact objects to update/create'" />
-           	        <sfdc:upsert config-ref="SalesforceB" externalIdFieldName="Id" type="Contact" doc:name="upsert Contacts in Org B">
-            			<sfdc:objects ref="#[payload]"/>
-        			</sfdc:upsert>
-                    <logger message="#[payload]" level="INFO" doc:name="log result"/>
+            <batch:step name="createContactsInBStep" accept-expression="!(payload is NullPayload) &amp;&amp; (payload['LastModifiedDateB'] == null || payload['LastModifiedDate'] &gt; payload['LastModifiedDateB'])">
+
+            	
+                <batch:commit size="200" doc:name="Batch Commit">
+                    <dw:transform-message doc:name="Transform Message">
+                        <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload map
+{
+	Id: $.Id,
+	Email: $.Email,
+	Description: $.Description,
+	FirstName: $.FirstName,
+	LastName: $.LastName,
+	MailingCountry: $.MailingCountry,
+	Title: $.Title,
+	AccountId: $.AccountId when ($.AccountId != null) otherwise null
+}]]></dw:set-payload>
+                    </dw:transform-message>
+					<sfdc:upsert config-ref="SalesforceB"  type="Contact" doc:name="Upsert contacts in org B" externalIdFieldName="Id">
+                        <sfdc:objects ref="#[payload]"/>
+					</sfdc:upsert>
+
                 </batch:commit>
             </batch:step>
         </batch:process-records>
         <batch:on-complete>
-			<json:object-to-json-transformer doc:name="transform BatchJobInstance to JSON" />
-			<logger level="INFO" doc:name="log 'broacast has finished'" message="One Way Sync has finished: #[payload]"/>
+			<json:object-to-json-transformer doc:name="Transform BatchJobInstance to JSON" />
+			<logger level="INFO" doc:name="Log 'broacast has finished'" message="One Way Sync has finished: #[payload]"/>
         </batch:on-complete>
     </batch:job>
     <flow name="mainFlow" >
-        <batch:execute name="businessLogicBatch" doc:name="trigger businessLogicBatch"/>
+        <batch:execute name="businessLogicBatch" doc:name="Trigger businessLogicBatch"/>
         <exception-strategy ref="defaultChoiceExceptionStrategy" doc:name="Reference Exception Strategy"/>
     </flow>
+<sub-flow name="findOrCreateAccountFlow" >
+        <enricher source="#[payload == null ? null : payload.Id]" target="#[payload.AccountId]" doc:name="store result in 'payload.AccountId'">
+            <sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Account WHERE Name = '#[payload['Account']['Name']]'" doc:name="Query Account in  Salesforce Instance B"/>
+        </enricher>
+        <choice doc:name="Choice">
+            <when expression="#[payload['AccountId'] == null]">
+                <flow-ref name="createNewAccountFlow" doc:name="Trigger CreateNewAccountFlow"/>
+            </when>
+            <otherwise>
+                <logger message="Account already exists. Nothing to create." level="INFO" doc:name="Logger"/>
 
+            </otherwise>
+        </choice>
+
+    </sub-flow>
+    <sub-flow name="createNewAccountFlow" >
+        <enricher target="#[payload['AccountId']]" doc:name="store result in 'payload.AccountId'" source="#[payload.getId()]">
+            <processor-chain doc:name="Processor Chain">
+                <dw:transform-message doc:name="Transform Message">
+                    <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	AccountNumber: payload.Account.AccountNumber,
+	Description : payload.Account.Description,
+	Name: payload.Account.Name,
+	(NumberOfEmployees : payload.Account.NumberOfEmployees as :number) when (payload.Account.NumberOfEmployees != null),
+	Industry: payload.Account.Industry
+}]]></dw:set-payload>
+                </dw:transform-message>
+
+                <sfdc:create-single config-ref="SalesforceB" type="Account" doc:name="Create Account in Salesforce Instance B">
+
+                </sfdc:create-single>
+
+
+            </processor-chain>
+        </enricher>
+    </sub-flow>
 </mule>
