@@ -35,7 +35,6 @@ payload.Envelope.Body.notifications.*Notification map
 	LastName: $.sObject.LastName
 }]]></dw:set-payload>
                 </dw:transform-message>
-<!--                 <data-mapper:transform config-ref="XML_To_Contact" doc:name="XML To Contact"/> -->
                 <flow-ref name="mainFlow" doc:name="Trigger mainFlow"/>
             </when>
             <otherwise>
