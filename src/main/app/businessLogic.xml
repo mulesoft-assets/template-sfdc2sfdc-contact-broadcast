@@ -42,7 +42,7 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
 
             	
                 <batch:commit size="200" doc:name="Batch Commit">
-                    <dw:transform-message doc:name="Transform Message">
+                    <dw:transform-message doc:name="Transform Accounts">
                         <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---

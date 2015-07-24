@@ -16,8 +16,6 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 
         <choice doc:name="Trigger Policy">
             <when expression="#['push' == '${trigger.policy}']">
-                <object-to-string-transformer doc:name="Object to String"/>
-                <logger message="Message from outbound : #[payload]" level="INFO" doc:name="Log input payload"/>
                 <dw:transform-message doc:name="Map XML Notifications to List">
                 	
                     <dw:input-payload mimeType="application/xml"/>
@@ -59,7 +57,6 @@ Here you should not:
  FROM Contact WHERE LastModifiedDate &gt; #[flowVars['lastQueryDate']] AND Email != null AND MailingCountry IN ('U.S.','United States','US')">
           	</sfdc:query>
       	</poll>
-        <logger message="#[payload]" level="INFO" doc:name="Log created/updated Contacts"/>
         <choice doc:name="Trigger Policy">
             <when expression="#['poll' == '${trigger.policy}']">
                 <flow-ref name="mainFlow" doc:name="Trigger mainFlow"/>
