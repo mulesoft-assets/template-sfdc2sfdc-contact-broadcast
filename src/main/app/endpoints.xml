@@ -17,8 +17,6 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
         <choice doc:name="Trigger Policy">
             <when expression="#['push' == '${trigger.policy}']">
                 <dw:transform-message doc:name="Map XML Notifications to List">
-                	
-                    <dw:input-payload mimeType="application/xml"/>
                     <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---

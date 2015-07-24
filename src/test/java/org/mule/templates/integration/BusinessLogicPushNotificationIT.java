@@ -8,11 +8,15 @@ package org.mule.templates.integration;
 
 import static junit.framework.Assert.assertEquals;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.activation.DataHandler;
+
+import org.glassfish.grizzly.utils.BufferInputStream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -20,9 +24,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mule.DefaultMuleMessage;
 import org.mule.MessageExchangePattern;
+import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
+import org.mule.api.transformer.DataType;
 import org.mule.construct.Flow;
+import org.mule.transformer.types.DataTypeFactory;
 
 import com.mulesoft.module.batch.BatchTestHelper;
 
@@ -79,15 +86,15 @@ public class BusinessLogicPushNotificationIT extends AbstractTemplateTestCase {
 
 	/**
 	 * In test, we are creating new SOAP message to create/update an existing contact. Contact first name is always generated
-	 * to ensure, that flow correctly updates contact in the Saleforce. 
+	 * to ensure, that flow correctly updates contact in the Salesforce. 
 	 * @throws Exception when flow error occurred
 	 */
 	@Test
 	public void testMainFlow() throws Exception {
 		// Execution
 		String firstName = buildUniqueName();
-		MuleMessage message = new DefaultMuleMessage(buildRequest(firstName), muleContext);
-		MuleEvent testEvent = getTestEvent(message, MessageExchangePattern.REQUEST_RESPONSE);
+		final MuleEvent testEvent = getTestEvent(null, triggerPushFlow);
+		testEvent.getMessage().setPayload(buildRequest(firstName), DataTypeFactory.create(InputStream.class, "application/xml"));
 		triggerPushFlow.process(testEvent);
 		
 		helper.awaitJobTermination(TIMEOUT_MILLIS * 1000, 500);
@@ -96,9 +103,9 @@ public class BusinessLogicPushNotificationIT extends AbstractTemplateTestCase {
 		Map<String, Object> contactToRetrieveMail = new HashMap<String, Object>();
 		contactToRetrieveMail.put("Email", USER_EMAIL);
 
-		MuleEvent event = retrieveContactFromBFlow.process(getTestEvent(contactToRetrieveMail, MessageExchangePattern.REQUEST_RESPONSE));
+		final MuleEvent retrieveEvent = retrieveContactFromBFlow.process(getTestEvent(contactToRetrieveMail, MessageExchangePattern.REQUEST_RESPONSE));
 
-		Map<String, Object> payload = (Map<String, Object>) event.getMessage().getPayload();
+		Map<String, Object> payload = (Map<String, Object>) retrieveEvent.getMessage().getPayload();
 		
 		// Track created records for a cleanup.
 		Map<String, Object> createdContact = new HashMap<String, Object>();
