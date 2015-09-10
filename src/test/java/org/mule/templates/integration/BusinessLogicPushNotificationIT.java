@@ -16,7 +16,6 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.glassfish.grizzly.utils.BufferInputStream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

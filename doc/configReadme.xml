@@ -53,7 +53,7 @@ Once this all is done every time when you will make a change on Account in sourc
 + http.port `9090` 
 + polling.frequency `60000`
 + polling.startDelayMillis `0`
-+ watermark.defaultExpression `YESTERDAY`
++ watermark.default.expression `YESTERDAY`
 + account.sync.policy `syncAccount`
 
 **Trigger policy(push, poll)**

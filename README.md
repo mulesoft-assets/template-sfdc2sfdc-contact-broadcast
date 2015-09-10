@@ -157,7 +157,7 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 + http.port `9090` 
 + polling.frequency `60000`
 + polling.startDelayMillis `0`
-+ watermark.defaultExpression `YESTERDAY`
++ watermark.default.expression `YESTERDAY`
 + account.sync.policy `syncAccount`
 
 **Trigger policy(push, poll)**
