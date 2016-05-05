@@ -6,7 +6,7 @@ xmlns="http://www.mulesoft.org/schema/mule/core"
 xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
 xmlns:spring="http://www.springframework.org/schema/beans" 
 xmlns:json="http://www.mulesoft.org/schema/mule/json"
-version="EE-3.7.0" 
+version="EE-3.7.1" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
@@ -42,7 +42,7 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
 
             	
                 <batch:commit size="200" doc:name="Batch Commit">
-                    <dw:transform-message doc:name="Transform Message">
+                    <dw:transform-message doc:name="Transform Accounts">
                         <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---
@@ -100,7 +100,7 @@ payload map
 	AccountNumber: payload.Account.AccountNumber,
 	Description : payload.Account.Description,
 	Name: payload.Account.Name,
-	(NumberOfEmployees : payload.Account.NumberOfEmployees as :number) when (payload.Account.NumberOfEmployees != null),
+	(NumberOfEmployees : payload.Account.NumberOfEmployees as :number {class: "java.lang.Integer"} default 0),
 	Industry: payload.Account.Industry
 }]]></dw:set-payload>
                 </dw:transform-message>
