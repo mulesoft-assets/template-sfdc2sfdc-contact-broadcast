@@ -7,10 +7,10 @@ xmlns="http://www.mulesoft.org/schema/mule/core"
 xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
 xmlns:spring="http://www.springframework.org/schema/beans" 
 xmlns:json="http://www.mulesoft.org/schema/mule/json"
-version="EE-3.7.1" 
+ 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+xsi:schemaLocation="http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -22,21 +22,26 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
         <batch:process-records>
             <batch:step name="getContactInBStep">
                 <enricher   doc:name="store result in 'payload.Id' and payload.LastModifiedDateB">
-                    <sfdc:query-single config-ref="SalesforceB" query="SELECT Id, LastModifiedDate FROM Contact WHERE Email = '#[payload['Email']]'" doc:name="Query contact in Salesforce instance B"/>
+                    <sfdc:query-single config-ref="SalesforceB" query="SELECT Id, LastModifiedDate FROM Contact WHERE Email = '#[payload.Email]'" doc:name="Query contact in Salesforce instance B"/>
                     <enrich source="#[payload == null ? null : payload.Id]" target="#[payload.Id]"/>
                     <enrich source="#[payload == null ? null : payload.LastModifiedDate]" target="#[payload.LastModifiedDateB]"/>
+                </enricher>
+            </batch:step>
+            <batch:step name="enrichWithAccountInAWhenPush" accept-expression="('syncAccount' == '${account.sync.policy}') &amp;&amp; ('push' == '${trigger.policy}') &amp;&amp; (payload.AccountId != null)">
+                <enricher source="#[payload]" target="#[payload.Account]" doc:name="Store in Account">
+                    <sfdc:query-single config-ref="SalesforceA" query="SELECT Id, Name,AccountNumber,Description,Industry,NumberOfEmployees FROM Account WHERE Id = '#[payload.AccountId]'" doc:name="query account in A instance"/>
                 </enricher>
             </batch:step>
             
             <batch:step name="findAccountInBStep" accept-expression="'syncAccount' == '${account.sync.policy}' &amp;&amp; payload['Account'] != null &amp;&amp; (payload['LastModifiedDateB'] == null || (new org.joda.time.DateTime(payload.LastModifiedDate)).isAfter(new org.joda.time.DateTime(payload.LastModifiedDateB)))">
             	<enricher source="#[payload == null ? null : payload.Id]" target="#[payload.AccountId]" doc:name="store result in 'payload.AccountId'">
-            		<sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Account WHERE Name = '#[payload['Account']['Name']]'" doc:name="Query Account in  Salesforce Instance B"/>
+            		<sfdc:query-single config-ref="SalesforceB" query="SELECT Id FROM Account WHERE Name = '#[payload.Account.Name]'" doc:name="Query Account in  Salesforce Instance B"/>
         		</enricher>
             </batch:step>
             
             <batch:step name="createAccountInBIfNecessaryStep" accept-expression="payload != null &amp;&amp;  payload.Account != null &amp;&amp; payload.AccountId == null &amp;&amp; (payload['LastModifiedDateB'] == null || (new org.joda.time.DateTime(payload.LastModifiedDate)).isAfter(new org.joda.time.DateTime(payload.LastModifiedDateB)))">
                 <batch:commit size="200" doc:name="Batch Commit">
-                	<flow-ref name="createAccountsFlow" doc:name="Call createAccountsFlow"/>
+                	<flow-ref name="createAccountsFlow" doc:name="createAccountsFlow"/>
                 </batch:commit>
             </batch:step>
 
@@ -66,7 +71,9 @@ payload map
             </batch:step>
         </batch:process-records>
         <batch:on-complete>
-            <flow-ref name="sendEmailLogResultFlow" doc:name="Call sendEmailLogResultFlow"/>
+            <json:object-to-json-transformer doc:name="Transform BatchJobInstance to JSON"/>
+            <logger message="Migration process has finished: #[payload]" level="INFO" doc:name="Log 'Migration process has finished'"/>
+
 
         </batch:on-complete>
     </batch:job>
@@ -99,24 +106,13 @@ payload map
             </choice>
         </foreach>
     </sub-flow>
-    <sub-flow name="sendEmailLogResultFlow" >
-        <scatter-gather doc:name="All">
-            <processor-chain>
-                <json:object-to-json-transformer doc:name="Transform BatchJobInstance to JSON"/>
-                <logger message="Migration process has finished: #[payload]" level="INFO" doc:name="Log 'Migration process has finished'"/>
-            </processor-chain>
-            <processor-chain>
-                <json:object-to-json-transformer doc:name="Transform BatchJobInstance to JSON"/>
-                <smtp:outbound-endpoint host="${smtp.host}" port="${smtp.port}" user="${smtp.user}" password="${smtp.password}" connector-ref="gmailConnector" to="${mail.to}" from="${mail.from}" subject="${mail.subject}" responseTimeout="10000" doc:name="Send mail"/>
-            </processor-chain>
-        </scatter-gather>
-    </sub-flow>
+
     <flow name="mainFlow"  processingStrategy="synchronous" doc:description="This flow is the entry point to the Anypoint Template  business logic.
 
 This flow should control the direction of the application, and it should be called by the different endpoints that your Anypoint Template  exposes to trigger it.
 
 ">
-        <batch:execute name="migrateContactsBatch" doc:name="Trigger migrateContactsBatch"/>
+        <batch:execute name="businessLogicBatch" doc:name="businessLogicBatch"/>
         <exception-strategy ref="defaultChoiceExceptionStrategy" doc:name="Catch Exception and call defaultChoiceExceptionStrategy"/>
     </flow>
     
