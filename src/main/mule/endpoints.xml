@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+
+<flow name="pushFlow" doc:id="92a761dd-0887-4a02-afd2-cf692c361572" >
+		<http:listener doc:name="Listener" doc:id="ab6f4fa1-c65c-4c6c-9a5f-df4981046c72" config-ref="HTTP_Listener_config" path="/"/>
+		<logger level="INFO" doc:name="Log - PUSH flow has been trigerred" doc:id="682408f2-952f-4291-b59c-aaf7ca55b1be" message="PUSH flow has been trigerred"/>
+		<choice doc:name='Is trigger policy set to "push"?' doc:id="5dd46525-a92a-4597-9ce5-68c054417509" >
+			<when expression="#['push' == '${trigger.policy}']" >
+				<ee:transform doc:name="Map XML Notifications to List" doc:id="319ace93-f407-4cbc-9bb3-51d89021f6ff" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload.Envelope.Body.notifications.*Notification map {
+	AccountId: $.sObject.AccountId,
+	Description: $.sObject.Description,
+	FirstName: $.sObject.FirstName,
+	Email: $.sObject.Email,
+	LastModifiedDate: $.sObject.LastModifiedDate,
+	LastName: $.sObject.LastName
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<flow-ref doc:name="Call mainFlow" doc:id="a6d7734e-bc60-41cc-ad58-5ec889c92665" name="mainFlow" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Log - message has been skipped" doc:id="93bbbb8d-2cd9-4ee0-aa20-2f6caf49970c" message="Trigger policy has been set to POLL. Skipping this message" />
+			</otherwise>
+		</choice>
+		<set-payload value="&lt;soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:out='http://soap.sforce.com/2005/09/outbound'&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;out:notificationsResponse&gt;&lt;out:Ack&gt;true&lt;/out:Ack&gt;&lt;/out:notificationsResponse&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;" doc:name="Set response body" doc:id="9016ad8c-4902-4a6c-a4a9-91a849ed6285" />
+	
+</flow>
+	<flow name="schedulerFlow" doc:id="5995b3d7-46ed-452b-ac66-b270f17d4161" >
+		<scheduler doc:name="Scheduler" doc:id="91e56b5f-3b73-4475-bc0e-3beb213ad932" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="${scheduler.frequency}" startDelay="${scheduler.start.delay}"/>
+			</scheduling-strategy>
+		</scheduler>
+		<choice doc:name='Is trigger policy set to "poll"?' doc:id="edaf6494-5718-4a75-b0ce-c3af7b798ae4" >
+			<when expression="#['poll' == '${trigger.policy}']" >
+				<flow-ref doc:name="salesforceQueryFlow" doc:id="ada07859-8839-4751-9623-68a08d31a472" name="salesforceQueryFlow"/>
+				<flow-ref doc:name="Call mainFlow" doc:id="7011798d-d6e9-461b-9d4c-9f7746bf3d68" name="mainFlow"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Log - message has been skipped" doc:id="ca9188e4-acac-4a48-91c4-6a8ecdd5cde3" message="Trigger policy has been set to PUSH. Skipping this message."/>
+			</otherwise>
+		</choice>	
+	</flow>
+	<flow name="mainFlow" doc:id="fbd67c5d-528c-44b3-b6b3-68e7e2b7498f" >
+		<flow-ref doc:name="bussinesLogicFlow" doc:id="02850655-a5dc-4c89-bd79-a7e94cca7676" name="bussinesLogicFlow"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="488b507d-e26c-4c56-8759-8bb4f6645d71" type="ANY">
+				<flow-ref doc:name="errorHandlingFlow" doc:id="afdaf73c-0137-4d60-84f6-5c41234771a3" name="errorHandlingFlow"/>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="salesforceQueryFlow" doc:id="e598bb7d-ef90-4998-958c-847511b14b97" >
+		<os:retrieve doc:name="Retrieve last query date" doc:id="9d436b17-28a3-4b8a-a932-e97548133fdc" key="lastQueryDate" objectStore="watermarkStore" target="lastQueryDate">
+			<os:default-value ><![CDATA[${watermark.default.expression}]]></os:default-value>
+		</os:retrieve>
+		<salesforce:query doc:name="Query Contacts with filtering criteria from Salesforce Instance A" doc:id="4118b394-1e6a-4d68-8ea8-885097e624ab" config-ref="Salesforce_Sfdc_A_config">
+			<salesforce:salesforce-query>SELECT Account.Id, Account.Name, Account.Description, Account.Industry, Account.NumberOfEmployees, Email,FirstName, LastModifiedDate, LastName, MailingCountry, Title
+ FROM Contact WHERE LastModifiedDate &gt; :watermarkDate AND Email != null AND MailingCountry IN ('U.S.','United States','US')</salesforce:salesforce-query>
+					<salesforce:parameters><![CDATA[#[output applicaton/java
+---
+{
+	"watermarkDate" : vars.lastQueryDate
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<os:store doc:name="Store last query date" doc:id="0a14ec4c-71cc-4786-b970-32ac88737786" key="lastQueryDate" failOnNullValue="false" objectStore="watermarkStore">
+			<os:value ><![CDATA[#[max(payload map $.LastModifiedDate)]]]></os:value>
+		</os:store>
+	</flow>
+</mule>
