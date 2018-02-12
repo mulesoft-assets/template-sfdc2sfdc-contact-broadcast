@@ -27,12 +27,12 @@ Please review the terms of the license before downloading and using this templat
 # Use Case <a name="usecase"/>
 As a Salesforce admin I want to synchronize contacts between two Salesfoce orgs.
 
-This Anypoint Template should serve as a foundation for setting an online sync of Contact from one Salesforce instance to another. Everytime there is a new contact or a change in an already existing one, the integration will poll for changes in Salesforce source instance and it will be responsible for updating the Salesforce on the target org.
+This Anypoint Template should serve as a foundation for setting an online sync of Contact from one Salesforce instance to another. Everytime there is new contact or a change in an already existing one, the integration will poll for changes in Salesforce source instance and it will be responsible for updating the Salesforce on the target org.
 
 Requirements have been set not only to be used as examples, but also to establish a starting point to adapt your integration to your requirements.
 
-As implemented, this Anypoint Template leverage the [Batch Module](http://www.mulesoft.org/documentation/display/current/Batch+Processing) and [Outbound messaging](https://www.salesforce.com/us/developer/docs/api/Content/sforce_api_om_outboundmessaging.htm)
-The batch job is divided in Input, Process and On Complete stages.
+As implemented, this Anypoint Template leverages the [Batch Module](http://www.mulesoft.org/documentation/display/current/Batch+Processing) and [Outbound messaging](https://www.salesforce.com/us/developer/docs/api/Content/sforce_api_om_outboundmessaging.htm)
+The batch job is divided in Process and On Complete stages.
 During the Input stage the Anypoint Template will go to the Salesforce Org A and query all the existing Contacts that match the filter criteria.
 During the Process stage, each SFDC Contact will be filtered depending on, if it has an existing matching Contact in the SFDC Org B and if the last updated date of the contact from SFDC Org A is greater than the one in SFDC Org B(in case that the same contact already exists).
 The last step of the Process stage will group the contacts and create/update them in SFDC Org B.
