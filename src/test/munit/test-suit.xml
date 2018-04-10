@@ -17,12 +17,30 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	<configuration-properties doc:name="Configuration properties" doc:id="d21ca8b5-ccfe-4a34-b750-26881b4274f7" file="mule-artifact.properties" />
 
 	<munit:before-test name="test-suitBefore_Test" description="Before tests actions" doc:id="175afc70-0474-4bb0-90a8-20029cf4ea1d">
-		<set-variable value='#["LastName" ++ randomInt(1000)]' doc:name="Set unique LastName for Contact1" doc:id="8d939e1e-e9a5-4411-9778-59b524e0d8a3"
-			variableName="contactLastName1" />
-		<set-variable value='#["LastName" ++ randomInt(1000)]' doc:name="Set unique LastName for Contact2" doc:id="d39a5705-b568-4ba6-91b0-dd75b03431d1"
-			variableName="contactLastName2" />
-		<set-variable value='#["LastName" ++ randomInt(1000)]' doc:name="Set unique LastName for Contact3" doc:id="d39a5705-b568-4ba6-91b0-dd75b03431d1"
-			variableName="contactLastName3" />
+		<ee:transform doc:name="Set unique LastNames for Contacts" doc:id="305513a0-5eca-4796-a6d9-269be9dc7f48">
+			<ee:message >
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="contactLastName1" ><![CDATA[%dw 2.0
+output application/java
+---
+/* Set unique LastName for Contact1 */
+"LastName" ++ randomInt(1000)]]>
+</ee:set-variable>
+<ee:set-variable variableName="contactLastName2" ><![CDATA[%dw 2.0
+output application/java
+---
+/* Set unique LastName for Contact2 */
+"LastName" ++ randomInt(1000)]]>
+</ee:set-variable>
+<ee:set-variable variableName="contactLastName3" ><![CDATA[%dw 2.0
+output application/java
+---
+/* Set unique LastName for Contact3 */
+"LastName" ++ randomInt(1000)]]>
+</ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<ee:transform doc:name="Prepare testing data for instance A" doc:id="7c253cc1-4a09-4e71-a9c5-74e5dbbf5848">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
