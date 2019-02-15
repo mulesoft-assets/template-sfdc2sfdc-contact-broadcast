@@ -14,12 +14,12 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
 
 <flow name="bussinesLogicFlow" doc:id="d617bfbe-587a-4485-b933-215251bb9109" >
-		<batch:job jobName="contact-broadcastBatch_Job" doc:id="0364eae5-6458-43c2-836a-7e996a88fd72" >
+		<batch:job jobName="contactBroadcastBatch" doc:id="0364eae5-6458-43c2-836a-7e996a88fd72" >
 			<batch:process-records >
 				<batch:step name="getContactInBStep" doc:id="cbd27632-773d-423f-87c2-b07a8e57431a" >
 					<salesforce:query-single doc:name="Query contact in Salesforce B" doc:id="573f94bc-79b9-4219-b6bd-65200b61b7a2" config-ref="Salesforce_Sfdc_B_config" target="IdInSF" >
 						<salesforce:salesforce-query >SELECT Id, LastModifiedDate FROM Contact WHERE Email = ':email'</salesforce:salesforce-query>
-						<salesforce:parameters ><![CDATA[#[output applicaton/java
+						<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {
 	email : payload.Email
@@ -136,4 +136,12 @@ output text/plain
 			</batch:on-complete>
 		</batch:job>
 	</flow>
+    <flow name="mainFlow" doc:id="59745f37-c34d-40d3-a182-ac59c43dad77" >
+        <flow-ref doc:name="bussinesLogicFlow" doc:id="0e311ff1-1df7-4fc2-b0f2-a1d8fba717f7" name="bussinesLogicFlow"/>
+        <error-handler >
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="31e60acb-9e2e-47d4-8612-280827f49e9b" type="ANY">
+                <flow-ref doc:name="errorHandlingFlow" doc:id="1cc1f3d5-ab06-4d12-ad42-7154c92bde34" name="errorHandlingFlow"/>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
 </mule>

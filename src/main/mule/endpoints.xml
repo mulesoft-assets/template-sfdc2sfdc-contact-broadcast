@@ -57,14 +57,6 @@ payload.Envelope.Body.notifications.*Notification map {
 			</otherwise>
 		</choice>	
 	</flow>
-	<flow name="mainFlow" doc:id="fbd67c5d-528c-44b3-b6b3-68e7e2b7498f" >
-		<flow-ref doc:name="bussinesLogicFlow" doc:id="02850655-a5dc-4c89-bd79-a7e94cca7676" name="bussinesLogicFlow"/>
-		<error-handler >
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="488b507d-e26c-4c56-8759-8bb4f6645d71" type="ANY">
-				<flow-ref doc:name="errorHandlingFlow" doc:id="afdaf73c-0137-4d60-84f6-5c41234771a3" name="errorHandlingFlow"/>
-			</on-error-propagate>
-		</error-handler>
-	</flow>
 	<flow name="salesforceQueryFlow" doc:id="e598bb7d-ef90-4998-958c-847511b14b97" >
 		<os:retrieve doc:name="Retrieve last query date" doc:id="9d436b17-28a3-4b8a-a932-e97548133fdc" key="lastQueryDate" objectStore="watermarkStore" target="lastQueryDate">
 			<os:default-value ><![CDATA[${watermark.default.expression}]]></os:default-value>
