@@ -51,7 +51,7 @@ payload - "Id" ++ {
 							<ee:set-variable variableName="recordPayload" ><![CDATA[%dw 2.0
 output application/java
 ---
-payload ++ {AccountId : vars.accountId[0].Id}]]></ee:set-variable>
+payload ++ {AccountId : vars.accountId.Id}]]></ee:set-variable>
 						</ee:variables>
 					</ee:transform>
 					<choice doc:name="Should be a new Account created?" doc:id="d35bb668-fc93-4cda-9350-a1a339e3a6e9" >
